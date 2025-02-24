@@ -1,0 +1,86 @@
+﻿@model project.Models.Category
+
+@{
+    ViewBag.Title = "Add";
+}
+
+
+@using (Html.BeginForm("Add", "QLDM", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-danger text-white">
+                <h2 class="text-center mb-0">Thêm Danh Mục Mới</h2>
+            </div>
+            <div class="card-body">
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+                <div class="form-group mb-3">
+                    @Html.LabelFor(model => model.ten_danh_muc, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10 offset-md-1">
+                        @Html.EditorFor(model => model.ten_danh_muc, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ten_danh_muc, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success me-2">Lưu</button>
+                    <a href="@Url.Action("Index", "QLDM")" class="btn btn-secondary">Hủy</a>
+                </div>
+            </div>
+
+        </div>
+     </div>
+    }
+<style>
+
+    .card {
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        font-size: 1.5rem;
+        text-align: center;
+        background-color: #007bff;
+        color: white;
+        border-bottom: 1px solid #ddd;
+        padding: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .form-group input {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: white;
+    }
+</style>
+
+

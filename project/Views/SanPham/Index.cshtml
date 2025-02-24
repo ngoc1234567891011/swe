@@ -1,0 +1,818 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@using project.Models;
+
+@model PagedList.IPagedList<project.Models.Product>
+@{
+    ViewBag.Title = ViewBag.CategoryName;
+}
+<style>
+    .menu-item {
+        position: relative;
+    }
+
+    .heart-icon {
+        position: absolute;
+        top: 0;
+        right: 0px;
+    }
+
+    .menu-img-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-info {
+        margin-top: 10px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .price-container {
+        color: black;
+        font-weight: bold;
+    }
+
+    .cart-icon a {
+        background-color: #ff4747;
+        color: white;
+        border-radius: 50%;
+        padding: 10px;
+        display: inline-block;
+        margin-top: -5px;
+        transition: all 0.3s ease;
+    }
+
+        .cart-icon a:hover {
+            background-color: #e41d1d;
+            transform: scale(1.1);
+        }
+
+    .old-price {
+        font-size: 14px;
+        color: #999;
+        text-decoration: line-through;
+        opacity: 0.6;
+    }
+
+    .new-price {
+        font-size: 16px;
+        font-weight: bold;
+        color: red;
+    }
+
+    .normal-price {
+        font-size: 16px;
+        font-weight: bold;
+        color: black;
+    }
+
+
+
+    .search-container {
+        margin-left: auto;
+        margin-right: 10px;
+        width: 150px;
+    }
+
+    .search-input {
+        height: 35px;
+        font-size: 14px;
+    }
+
+    .zyler-try-on-cta {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        background-color: #5a4f4f;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 8px 15px;
+        font-size: 10px;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        z-index: 10;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+    }
+
+        .zyler-try-on-cta img {
+            width: 14px;
+            height: 14px;
+        }
+
+        .zyler-try-on-cta:hover {
+            background-color: #333;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
+        }
+</style>
+
+<section id="menu" class="menu">
+    <div class="container" data-aos="fade-up">
+        <div class="section-header">
+            <br />
+            <div class="pagetitle">
+                <nav class="d-flex">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="~/Home"><i class="bi bi-house-door"></i></a></li>
+                        <li class="breadcrumb-item"><a href="~/cuahang">Cửa hàng</a></li>
+                        <li class="breadcrumb-item active">@ViewBag.CategoryName</li>
+                    </ol>
+                    <div class="search-container">
+                        @using (Html.BeginForm("Index", "SanPham", FormMethod.Get, new { @class = "form-inline" }))
+                        {
+                            <input type="text" class="form-control search-input" placeholder="Tìm kiếm" value="@ViewBag.Keyword" name="searchString">
+                            <input type="hidden" name="categoryId" value="@ViewBag.CategoryId">
+                            <input type="hidden" name="page" value="1">
+                        }
+                    </div>
+                </nav>
+            </div>
+
+            <p><span>@ViewBag.CategoryName</span></p>
+        </div>
+        <div class="tab-content" data-aos="fade-up" data-aos-delay="300">
+            <div class="row gy-5">
+                @foreach (var product in Model)
+                {
+                    <div class="col-lg-4 menu-item">
+                        <a href="~/Content/images/@product.hinhanh" class="glightbox"><img src="~/Content/images/@product.hinhanh" width="400" height="500" class ="menu-img img-fluid" alt=""></a>
+                        <span class="heart-icon">
+                            @if (Session["FavItem"] != null && ((List<int>)Session["FavItem"]).Contains(product.masp))
+                            {
+                                <a class="btn favorite-toggle" data-action="remove" data-product-id="@product.masp">
+                                    <img class="heartImage" src="~/Content/img/icons8-heart-black.png" alt="Đã yêu thích">
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="btn favorite-toggle" data-action="add" data-product-id="@product.masp">
+                                    <img class="heartImage" src="~/Content/img/icons8-heart-24.png" alt="Yêu thích">
+                                </a>
+                            }
+                        </span>
+
+
+                        <div class="product-info">
+
+                            <button class="zyler-try-on-cta" data-masp="@product.masp" data-image="@product.hinhanh">
+                                <img src="~/Content/img/icons8-camera-50.png" alt="Camera Icon"> Thử Đồ
+                            </button>
+
+
+
+
+
+                            <h4>
+                                <a style="color: black; font-size: 12px;" href="@Url.Action("Details", new { id = product.masp })">@product.tensp</a>
+                            </h4>
+                            <div class="price-container">
+                                <p style="font-size: 15px;" class="price">
+                                    @if (product.Promotion != null && !string.IsNullOrEmpty(product.Promotion.ten_khuyen_mai))
+                                    {
+                                        <span class="old-price">
+                                            @(product.gia?.ToString("N0")) đ
+                                        </span>
+                                        <br />
+                                        <span class="new-price">
+                                            @{
+                                                decimal originalPrice = product.gia.HasValue ? (decimal)product.gia.Value : 0;
+                                                decimal discountPercentage = product.Promotion.dieu_kien.HasValue ? (decimal)product.Promotion.dieu_kien.Value : 0;
+
+                                                decimal finalPrice = originalPrice * (1 - discountPercentage / 100);
+                                                string formattedPrice = finalPrice.ToString("N0");
+                                            }
+                                            @formattedPrice đ
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="normal-price">
+                                            @(product.gia?.ToString("N0")) đ
+                                        </span>
+                                        <br />
+                                        <br />
+                                    }
+                                </p>
+                            </div>
+
+
+                            <div class="cart-icon">
+                                <a class="btn add-to-cart-btn" data-id="@product.masp" data-quantity="1">
+                                    <img src="~/Content/img/icons8-add-shopping-cart-24.png" alt="Add to Cart">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <br />
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, categoryId = ViewBag.CategoryId, searchString = ViewBag.Keyword }),
+        new PagedListRenderOptions
+        {
+            ContainerDivClasses = new[] { "section-header" },
+            UlElementClasses = new[] { "pagination" },
+            LiElementClasses = new[] { "page-link" },
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToLastPage = PagedListDisplayMode.Never,
+        })
+    </div>
+</section>
+
+<style>
+    .pagination {
+        margin-left: 500px;
+    }
+</style>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js"></script>
+@Html.Raw(@"<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs'></script>
+<script src='https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet'></script>")
+<script>
+    $(document).ready(function () {
+        $(".add-to-cart-btn").click(function () {
+            var id = $(this).data("id");
+            var quantity = $(this).data("quantity");
+
+            $(this).prop('disabled', true);
+
+            $.ajax({
+                url: '/ShoppingCart/AddToCart',
+                type: 'POST',
+                data: { id: id, quantity: quantity },
+                success: function (response) {
+                    console.log("Response from server:", response);
+                    alert(response.message); 
+
+                    $(".add-to-cart-btn").prop('disabled', false);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error details:", xhr.responseText);
+                    alert("An error occurred while adding the product to the cart.");
+
+
+                    $(".add-to-cart-btn").prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>
+
+
+    <!-- Popup Modal -->
+    <div id="tryOnModal" class="modal">
+        <div class="modal-header">
+            <h>Thử Đồ</h>
+
+            <span class="close">&times;</span>
+        </div>
+        <!-- Camera Try-On Section -->
+        <div class="camera-section">
+            <button id="startCameraButton" class="camera-btn">
+                <span>
+                    <img src="~/Content/img/icons8-camera-50.png" alt="Open Camera" />
+                </span>
+            </button>
+            <button id="stopCameraButton" class="camera-btn" style="display: none;">
+                <span>
+                    <img src="~/Content/img/icons8-pause-64.png" alt="Stop Camera" />
+                </span>
+            </button>
+            <div id="tryOnArea" style="text-align: center; display: none;">
+                <div id="loading" style="display: none; text-align: center; font-size: 18px; color: gray;">
+                    Đang tải... Vui lòng chờ.
+                </div>
+
+                <div style="display: none;">
+                    <video id="video" width="640" height="480" autoplay></video>
+                </div>
+
+                <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+            </div>
+        </div>
+
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;" />
+
+        <div class="modal-content">
+            <input type="file" id="imageUpload" accept="image/*" />
+            <img id="uploadedImage" src="" alt="Uploaded Image" style="display:none; width: 100%; max-width: 300px;" />
+            <button id="nextButton" style="display:none;">Thử</button>
+            <img id="resultImage" src="" alt="Result Image" style="display:none; width: 100%; max-width: 300px;" />
+        </div>
+        <div class="resize-handle"></div>
+
+    </div>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js"></script>
+    @Html.Raw(@"<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet'></script>")
+    <script>
+        let selectedImagePath = null;
+        let isResizing = false;
+        let modal = $("#tryOnModal");
+
+        $(".resize-handle").on("mousedown", function (event) {
+            event.preventDefault();
+            isResizing = true;
+
+            let initialWidth = modal.width();
+            let initialHeight = modal.height();
+            let initialMouseX = event.pageX;
+            let initialMouseY = event.pageY;
+
+            $(document).on("mousemove.resize", function (event) {
+                if (isResizing) {
+                    let dx = event.pageX - initialMouseX;
+                    let dy = event.pageY - initialMouseY;
+
+                    modal.css({
+                        width: initialWidth + dx + "px",
+                        height: initialHeight + dy + "px",
+                    });
+
+                    $("#canvas").width(modal.width());
+                    $("#canvas").height(modal.height());
+                }
+            });
+
+            $(document).on("mouseup.resize", function () {
+                isResizing = false;
+                $(document).off("mousemove.resize");
+                $(document).off("mouseup.resize");
+            });
+        });
+        $(document).ready(function () {
+            async function preloadShirt(imagePath) {
+                shirtImage = new Image(); 
+                shirtImage.src = '/Content/images/' + imagePath; 
+
+
+                return new Promise((resolve, reject) => {
+                    shirtImage.onload = () => {
+                        console.log(`Image ${imagePath} loaded successfully.`);
+                        resolve(shirtImage); 
+                    };
+                    shirtImage.onerror = () => {
+                        console.error(`Failed to load image ${imagePath}.`);
+                        reject(`Failed to load image ${imagePath}`); 
+                    };
+                });
+            }
+            $(".zyler-try-on-cta").click(async function () {
+                const productId = $(this).data("masp");
+                const newImagePath = $(this).data("image");
+
+
+                if (newImagePath !== selectedImagePath) {
+                    selectedImagePath = newImagePath;  
+                    console.log(`Selected product ID: ${productId}, Image path: ${selectedImagePath}`);
+
+                    await preloadShirt(selectedImagePath);  
+
+
+                    $("#tryOnModal").css("display", "block");
+                    $("#nextButton").data("productId", productId);
+                    $('#resultImage').hide();
+                    $('#tryOnModal').fadeIn();
+                }
+
+            });
+
+
+
+            $(".close").click(function () {
+                $("#tryOnModal").css("display", "none");
+            });
+
+
+            $(".modal-header").on("mousedown", function (event) {
+                event.preventDefault();
+                let modal = $("#tryOnModal");
+                let offset = modal.offset();
+                let mouseX = event.pageX;
+                let mouseY = event.pageY;
+
+                $(document).on("mousemove.modal", function (event) {
+                    let dx = event.pageX - mouseX;
+                    let dy = event.pageY - mouseY;
+                    modal.css({
+                        top: offset.top + dy,
+                        left: offset.left + dx,
+                    });
+                });
+
+                $(document).on("mouseup.modal", function () {
+                    $(document).off("mousemove.modal");
+                    $(document).off("mouseup.modal");
+                });
+            });
+
+            $("#imageUpload").change(function () {
+                var fileInput = $(this).get(0);
+                if (fileInput.files.length === 0) {
+                    alert("Vui lòng tải lên hình ảnh của bạn.");
+                    return;
+                }
+
+                $("#uploadForm").hide();
+                $("#nextButton").hide();
+
+                var file = fileInput.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $("#uploadedImage").attr("src", e.target.result);
+                    $("#nextButton").show();
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+
+
+        $(document).ready(function () {
+            let currentProductId;
+
+            $(".zyler-try-on-cta").click(function () {
+                var masp = $(this).data("masp");
+
+                if (!masp) {
+                    alert("Mã sản phẩm không tồn tại.");
+                    return;
+                }
+
+                $("#tryOnModal").css("display", "block");
+                $("#nextButton").data("masp", masp);
+            });
+
+            $("#imageUpload").change(function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $("#uploadedImage").attr("src", e.target.result).show();
+                        $("#nextButton").show();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+
+            $("#nextButton").click(function () {
+                var masp = $(this).data("masp");
+                var fileInput = $("#imageUpload").get(0);
+                var file = fileInput.files[0];
+
+                if (!file) {
+                    alert("Vui lòng tải lên hình ảnh.");
+                    return;
+                }
+
+
+                $("#resultImage").hide();
+
+
+                var formData = new FormData();
+                formData.append("imageUpload", file);
+                formData.append("masp", masp);
+
+
+                $.ajax({
+                    url: '/SanPham/ThuDo',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+
+                            var resultImageUrl = response.imageUrl + "?v=" + new Date().getTime();
+
+                            // Hiển thị ảnh kết quả
+                            $("#resultImage").attr("src", resultImageUrl).show();
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error details:", xhr.responseText);
+                        alert("Đã xảy ra lỗi khi thử đồ.");
+                    }
+                });
+            });
+
+
+            $("#closeModal").click(function () {
+                $("#tryOnModal").hide();
+            });
+        });
+
+
+    let shirtImage;
+
+
+    $(document).ready(function () {
+        let net;
+
+        // Hàm tải trước hình ảnh sản phẩm
+        async function preloadShirt(imagePath) {
+            shirtImage = new Image();  
+            shirtImage.src = '/Content/images/' + imagePath; 
+
+            return new Promise((resolve, reject) => {
+                shirtImage.onload = () => {
+                    console.log(`Image ${imagePath} loaded successfully.`);
+                    resolve(shirtImage); 
+                };
+                shirtImage.onerror = () => {
+                    console.error(`Failed to load image ${imagePath}.`);
+                    reject(`Failed to load image ${imagePath}`); 
+                };
+            });
+        }
+
+
+        async function preloadPosenet() {
+            document.getElementById("loading").style.display = "block";
+            try {
+                net = await posenet.load();
+                console.log("PoseNet loaded.");
+                document.getElementById("loading").style.display = "none";
+            } catch (error) {
+                console.error("Error loading PoseNet: ", error);
+            }
+        }
+
+        // Bắt đầu camera và nhận diện tư thế
+        function startCameraAndDetectPose() {
+            const video = document.getElementById("video");
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+
+                    video.onloadedmetadata = function () {
+                        video.style.display = "block";
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        canvas.style.display = "block";
+
+                        detectPose(); 
+                    };
+                })
+                .catch(error => console.error("Error accessing camera: ", error));
+        }
+
+        // Nhận diện tư thế và ghép áo
+        async function detectPose() {
+            const video = document.getElementById("video");
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            const pose = await net.estimateSinglePose(video, {
+                flipHorizontal: false,
+                decodingMethod: "single-person",
+                inputResolution: { width: 200, height: 150 }, 
+                multiplier: 0.5 
+            });
+
+            // Vẽ video và xử lý keypoints
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            drawKeypoints(pose.keypoints, 0.5, ctx);
+            drawSkeleton(pose.keypoints, 0.5, ctx);
+            overlayShirt(pose.keypoints, ctx);
+
+            requestAnimationFrame(detectPose);
+        }
+
+        // Vẽ keypoints
+        function drawKeypoints(keypoints, minConfidence, ctx) {
+            keypoints.forEach(point => {
+                if (point.score > minConfidence) {
+                    const { y, x } = point.position;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = "red";
+                    ctx.fill();
+                }
+            });
+        }
+
+        // Vẽ skeleton
+        function drawSkeleton(keypoints, minConfidence, ctx) {
+            const adjacentKeyPoints = posenet.getAdjacentKeyPoints(keypoints, minConfidence);
+            adjacentKeyPoints.forEach(([from, to]) => {
+                const { y: y1, x: x1 } = from.position;
+                const { y: y2, x: x2 } = to.position;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "green";
+                ctx.stroke();
+            });
+        }
+
+        // Ghép áo
+        function overlayShirt(keypoints, ctx) {
+            if (!shirtImage || !shirtImage.complete) {
+                console.log("Shirt image not ready.");
+                return;
+            }
+
+            const leftShoulder = keypoints.find(point => point.part === "leftShoulder");
+            const rightShoulder = keypoints.find(point => point.part === "rightShoulder");
+            const leftHip = keypoints.find(point => point.part === "leftHip");
+            const rightHip = keypoints.find(point => point.part === "rightHip");
+
+            if (
+                leftShoulder && rightShoulder && leftHip && rightHip &&
+                leftShoulder.score > 0.5 && rightShoulder.score > 0.5
+            ) {
+                const shirtWidth = Math.abs(rightShoulder.position.x - leftShoulder.position.x) * 2.2;
+                const shirtHeight = Math.abs(leftHip.position.y - leftShoulder.position.y) * 1.5;
+
+                const shirtX = rightShoulder.position.x - shirtWidth / 3.2;
+                const shirtY = leftShoulder.position.y - shirtHeight * 0.2;
+
+                ctx.drawImage(shirtImage, shirtX, shirtY, shirtWidth, shirtHeight);
+            }
+        }
+
+        // Xử lý sự kiện
+        $("#startCameraButton").click(async function () {
+            $("#tryOnArea").show();
+            $(this).hide();
+            $("#stopCameraButton").show();
+
+            await preloadPosenet();
+            if (selectedImagePath) {
+                await preloadShirt(selectedImagePath);
+            } else {
+                console.error("No shirt image selected.");
+            }
+
+            try {
+                startCameraAndDetectPose();
+            } catch (error) {
+                console.error("Error starting camera and detecting pose:", error);
+            }
+        });
+
+        $("#stopCameraButton").click(function () {
+            const video = document.getElementById("video");
+            const stream = video.srcObject;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            video.style.display = "none";
+            $("#stopCameraButton").hide();
+            $("#startCameraButton").show();
+        });
+    });
+</script>
+<script>
+    $(document).on('click', '.favorite-toggle', function (e) {
+        e.preventDefault();
+
+        const action = $(this).data('action'); 
+        const productId = $(this).data('product-id');
+        const icon = $(this).find('.heartImage');
+
+        $.ajax({
+            url: `/Favorite/${action}`, 
+            type: 'POST',
+            data: { masp: productId },
+            success: function (response) {
+                if (response.success) {
+                    if (action === "add") {
+                        icon.attr('src', '/Content/img/icons8-heart-black.png'); 
+                        $(e.target).data('action', 'remove');
+                    } else {
+                        icon.attr('src', '/Content/img/icons8-heart-24.png'); 
+                        $(e.target).data('action', 'add'); 
+                    }
+                } else {
+                    alert('Có lỗi xảy ra, vui lòng thử lại!');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+                alert('Không thể thay đổi trạng thái yêu thích. Vui lòng thử lại sau.');
+            }
+        });
+    });
+</script>
+
+<style>
+    .resize-handle {
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    cursor: se-resize; 
+}
+
+        .resize-handle:hover {
+            background-color: white;
+        }
+    .camera-section {
+        margin-bottom: 20px;
+        margin-top: 20px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .camera-btn {
+        display: inline-block;
+        width: 80%;
+        padding: 15px 0;
+        font-size: 1.2rem;
+        color: white;
+        background-color: #e63333;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        text-align: center;
+    }
+
+        .camera-btn:hover {
+            background-color: #b62121;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 30px;
+        top: 20px;
+        width: 350px;
+        height: 550px;
+        resize: both;
+        background-color: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        overflow: auto;
+        border-radius: 8px;
+    }
+
+    .modal-header {
+        padding: 10px;
+        background-color: #f1f1f1;
+        cursor: move;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+
+    .close {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+    .image-upload-section {
+        width: 100%;
+        text-align: center;
+    }
+
+    input[type="file"] {
+        margin: 10px 0;
+        width: 80%;
+    }
+
+    hr {
+        width: 100%;
+    }
+
+    #uploadedImage, #resultImage {
+        margin-top: 10px;
+    }
+</style>
+
+

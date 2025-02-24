@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "Try On Result";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+</head>
+<body style="margin-top:550px">
+    <h1>@ViewBag.Title</h1>
+
+    @if (ViewBag.ResultImagePath != null)
+    {
+        <img src="@ViewBag.ResultImagePath" alt="Try On Result" />
+    }
+    else
+    {
+        <p>No result image available.</p>
+    }
+
+    <a href="@Url.Action("TryOn", new { id = ViewBag.ProductId })">Try Again</a>
+</body>
+</html>

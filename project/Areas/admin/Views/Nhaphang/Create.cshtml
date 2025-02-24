@@ -1,0 +1,85 @@
+﻿@model project.Models.HoaDonNhapHang
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container d-flex justify-content-center align-items-center flex-column" style="margin-top:20px;">
+        <div class="row w-100">
+            <!-- Cột bên trái -->
+            <div class="col-md-5 border-end">
+                <h3 class="text-center mb-4">Thông tin chung</h3>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.manv)
+                    @Html.DropDownListFor(model => model.manv,
+                        (IEnumerable<SelectListItem>)ViewBag.NhanVienList,
+                        "Chọn nhân viên",
+                        new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.mancc)
+                    @Html.DropDownListFor(model => model.mancc,
+                        (IEnumerable<SelectListItem>)ViewBag.NhaCungCapList,
+                        "Chọn nhà cung cấp",
+                        new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ngay)
+                    @Html.TextBoxFor(model => model.ngay,
+                        new { @class = "form-control", type = "date" })
+                </div>
+            </div>
+
+            <!-- Cột bên phải -->
+            <div class="col-md-7">
+                <h3 class="text-center mb-4">Chi tiết sản phẩm</h3>
+                <div id="product-details">
+                    <div class="form-group">
+                        <label>Chọn sản phẩm</label>
+                        <select name="chiTietList[0].masp" class="form-control">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.SanPhamList)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                        <label>Số lượng</label>
+                        <input type="number" name="chiTietList[0].soluong" class="form-control" />
+                        <label>Giá</label>
+                        <input type="number" name="chiTietList[0].gia" class="form-control" />
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary mt-3" onclick="addProductDetail()">Thêm sản phẩm</button>
+            </div>
+        </div>
+
+        <!-- Nút Nhập Hàng -->
+        <div class="w-100 text-center mt-4">
+            <input type="submit" value="Nhập hàng" class="btn btn-primary px-4 py-2" />
+        </div>
+    </div>
+}
+
+<script>
+    let productCount = 1;
+    function addProductDetail() {
+        const productDetails = document.getElementById('product-details');
+        const newProductDetail = `
+            <div class="form-group">
+                <label>Chọn sản phẩm</label>
+                <select name="chiTietList[${productCount}].masp" class="form-control">
+                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.SanPhamList)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+                <label>Số lượng</label>
+                <input type="number" name="chiTietList[${productCount}].soluong" class="form-control" />
+                <label>Giá</label>
+                <input type="number" name="chiTietList[${productCount}].gia" class="form-control" />
+            </div>
+        `;
+        productDetails.insertAdjacentHTML('beforeend', newProductDetail);
+        productCount++;
+    }
+</script>

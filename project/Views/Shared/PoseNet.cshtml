@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>PoseNet Demo</title>
+    @Html.Raw("<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs'></script>")
+    @Html.Raw("<script src='https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet'></script>")
+</head>
+<body>
+    <input type="file" id="upload" />
+    <canvas id="canvas"></canvas>
+    <script>
+        const upload = document.getElementById('upload');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let net;
+
+        async function loadModel() {
+            net = await posenet.load();
+        }
+
+        async function estimatePose(image) {
+            const pose = await net.estimateSinglePose(image, {
+                flipHorizontal: false
+            });
+            return pose;
+        }
+
+        function drawPose(pose) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < pose.keypoints.length; i++) {
+                const keypoint = pose.keypoints[i];
+                if (keypoint.score > 0.5) {
+                    ctx.beginPath();
+                    ctx.arc(keypoint.position.x, keypoint.position.y, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'red';
+                    ctx.fill();
+                }
+            }
+        }
+
+        async function sendPoseData(pose) {
+            const nose = pose.keypoints.find(point => point.part === 'nose');
+            const x = nose.position.x;
+            const y = nose.position.y;
+
+            await fetch('/SanPham/TryOnResult', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ x, y, masp: 1 })  // Adjust 'masp' as needed
+            });
+        }
+
+        upload.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            const image = new Image();
+            image.src = URL.createObjectURL(file);
+
+            image.onload = async () => {
+                canvas.width = image.width;
+                canvas.height = image.height;
+                ctx.drawImage(image, 0, 0);
+                const pose = await estimatePose(image);
+                drawPose(pose);
+                await sendPoseData(pose);
+            };
+        });
+
+        loadModel();
+    </script>
+</body>
+</html>

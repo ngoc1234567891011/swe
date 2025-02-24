@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+@model IEnumerable<project.Models.Promotion>
+<div class="container-fluid" data-aos="fade-up">
+    <br />
+    <br />
+
+    <div class="section-header">
+        <p>Danh sách khuyến mãi</p>
+        <h7>
+            @Html.ActionLink("Thêm mới", "Create")
+        </h7>
+        <div class="pagetitle">
+            <nav class="d-flex">
+              
+                <div class="search-container" >
+                    @using (Html.BeginForm("timkiem", "Product", new { area = "Admin" }, FormMethod.Get, new { @class = "form-inline" }))
+                    {
+                        <input type="hidden" name="categoryID" value="@ViewBag.CategoryID" /> 
+                        <input type="text" class="form-control search-input" placeholder="Tìm kiếm" value="@ViewBag.Keyword" name="searchString">
+                    }
+                </div>
+            </nav>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mã KM</th>
+                    <th>Tên khuyến mãi</th>
+                    <th>Mã sản phẩm</th>
+                    <th>Giá trị</th>
+                    <th>Thời gian bắt đầu</th>
+                    <th>Thời gian kết thúc</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var promotion in Model)
+                {
+                    <tr>
+                        <td>@promotion.makm</td>
+                        <td>@promotion.ten_khuyen_mai</td>
+                        <td>@promotion.masp</td>
+                        <td>@promotion.dieu_kien</td>
+                        <td>@promotion.thoi_gianbd</td>
+                        <td>@promotion.thoi_giankt</td>
+
+                        <td>@promotion.trang_thai</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="@Url.Action("Edit", new { id = promotion.makm })" class="btn btn-link">
+                                    <img src='~/Content/img/icons8-edit-100.png' alt='Sửa' class="action-icon" />
+                                </a> |
+                                @using (Html.BeginForm("Delete", "QLKM", new { id = promotion.makm }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa Khuyến mãi này?');">
+                                        <img src="~/Content/img/icons8-delete-30.png" alt="Xóa" class="action-icon" />
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+    </div>
+        <style>
+            .action-buttons {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .action-icon {
+                width: 15px;
+                height: 15px;
+                object-fit: contain;
+            }
+
+            button {
+                border: none;
+                background: none;
+                padding: 0;
+                outline: none;
+            }
+
+                button img {
+                    width: 10px;
+                    height: 10px;
+                }
+            .search-container {
+                margin-left: auto;
+                margin-right: 10px;
+                width: 150px;
+            }
+
+            .search-input {
+                height: 35px;
+                font-size: 14px;
+            }
+        </style>

@@ -1,0 +1,103 @@
+﻿@model IEnumerable<project.Models.PhanQuyen>
+
+@{
+    ViewBag.Title = "Danh sách quyền";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+
+}
+<style>
+    .search-container {
+        margin-left: auto;
+        margin-right: 10px;
+        width: 200px;
+    }
+
+    .search-input {
+        height: 35px;
+        font-size: 14px;
+    }
+</style>
+<h2></h2>
+<div class="container-fluid" data-aos="fade-up">
+
+    <div class="section-header">
+        <p>Phân quyền</p>
+        <h7>
+            @Html.ActionLink("Thêm mới", "Create")
+        </h7>
+        <table class="table" data-aos="fade-up" data-aos-delay="100">
+            <!-- Hiển thị thông báo -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+            <tr data-aos="fade-up" data-aos-delay="500">
+                <th>Mã quyền</th>
+                <th>Mô tả</th>
+                <th></th>
+            </tr>
+            <tbody>
+                @foreach (var phanQuyen in Model)
+                {
+                    <tr>
+                        <td>@phanQuyen.mapq</td>
+                        <td>@phanQuyen.mota</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="@Url.Action("Edit", new { id = phanQuyen.mapq })" class="btn btn-link">
+                                    <img src='~/Content/img/icons8-edit-100.png' alt='Sửa' class="action-icon" />
+                                </a> |
+                                @using (Html.BeginForm("Delete", "QLSP", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="mapq" value="@phanQuyen.mapq" />
+                                    <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                        <img src="~/Content/img/icons8-delete-30.png" alt="Xóa" class="action-icon" />
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+
+
+    </div>
+</div>
+<style>
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .action-icon {
+        width: 15px;
+        height: 15px;
+        object-fit: contain;
+    }
+
+    button {
+        border: none;
+        background: none;
+        padding: 0;
+        outline: none;
+    }
+
+        button img {
+            width: 10px;
+            height: 10px;
+        }
+</style>

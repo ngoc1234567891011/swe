@@ -1,0 +1,82 @@
+﻿@model IEnumerable<project.Models.Category>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+
+}
+
+<h2></h2>
+<div class="container-fluid" data-aos="fade-up">
+
+    <div class="section-header">
+        <p>danh mục </p>
+        <h7>
+            @Html.ActionLink("Thêm mới", "Add")
+        </h7>
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.madm)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ten_danh_muc)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.madm)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ten_danh_muc)
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="@Url.Action("Edit", new { id = item.madm })" class="btn btn-link">
+                                <img src='~/Content/img/icons8-edit-100.png' alt='Sửa' class="action-icon" />
+                            </a> |
+                            @using (Html.BeginForm("Delete", "QLDM", new { id = item.madm }, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục?');">
+                                    <img src="~/Content/img/icons8-delete-30.png" alt="Xóa" class="action-icon" />
+                                </button>
+                            }
+
+                        </div>
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+<style>
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .action-icon {
+        width: 15px;
+        height: 15px;
+        object-fit: contain;
+    }
+
+    button {
+        border: none;
+        background: none;
+        padding: 0;
+        outline: none;
+    }
+
+        button img {
+            width: 10px;
+            height: 10px;
+        }
+</style>

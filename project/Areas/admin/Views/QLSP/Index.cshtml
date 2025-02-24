@@ -1,0 +1,163 @@
+﻿@model IEnumerable<project.Models.Product>
+<style>
+    .search-container {
+        margin-left: auto;
+        margin-right: 10px;
+        width: 200px;
+    }
+
+    .search-input {
+        height: 35px;
+        font-size: 14px;
+    }
+</style>
+@{
+    ViewBag.Title = "Index";
+}
+<h2></h2>
+<div class="container-fluid" data-aos="fade-up">
+    
+    <div class="section-header">
+        <p>Sản phẩm</p>
+        <h7>
+            @Html.ActionLink("Thêm mới", "Create")
+        </h7>
+        <div class="pagetitle">
+            <nav class="d-flex">
+                <div class="sp-container" style="float:left">
+                    @using (Html.BeginForm("sp", "Product", new { area = "Admin" }, FormMethod.Get, new { @class = "form-inline" }))
+                    {
+                        <button type="button" class="btn btn-warning rounded-pill"><a href="~/Admin/Nhaphang/Create">Nhập hàng</a></button>
+                    }
+                </div><div class="sp-container" style="float:left">
+                    @using (Html.BeginForm("Index", "QLKM", new { area = "Admin" }, FormMethod.Get, new { @class = "form-inline" }))
+                    {
+                        <button type="button" class="btn btn-warning rounded-pill"><a href="~/Admin/QLKM/Index">Khuyến mãi</a></button>
+                    }
+                </div>
+                <div class="search-container">
+                    @using (Html.BeginForm("timkiem", "Product", new { area = "Admin" }, FormMethod.Get, new { @class = "form-inline" }))
+                    {
+                        <input type="hidden" name="categoryID" value="@ViewBag.CategoryID" /> 
+                        <input type="text" class="form-control search-input" placeholder="Tìm kiếm" value="@ViewBag.Keyword" name="searchString">
+                    }
+                </div>
+            </nav>
+        </div>
+        <table class="table" data-aos="fade-up" data-aos-delay="100">
+            <!-- Hiển thị thông báo -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+            <tr data-aos="fade-up" data-aos-delay="500">
+                <th>
+                    @Html.DisplayNameFor(model => model.masp)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.tensp)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.madm)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.gia)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.mota)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.hinhanh)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.soluong)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.daban)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.masp)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.tensp)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.madm)
+                    </td>
+                    <td>
+                        @(item.gia?.ToString("N0"))đ
+                    </td>
+                    <td style="width:300px; text-align:justify">
+                        @Html.Raw(item.mota)
+                    </td>
+                    <td>
+                        <img style="width:120px; height:120px" src="~/Content/images/@item.hinhanh" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.soluong)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.daban)
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="@Url.Action("Edit", new { id = item.masp })" class="btn btn-link">
+                                <img src='~/Content/img/icons8-edit-100.png' alt='Sửa' class="action-icon" />
+                            </a> |
+                            @using (Html.BeginForm("Delete", "QLSP", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="masp" value="@item.masp" />
+                                <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                    <img src="~/Content/img/icons8-delete-30.png" alt="Xóa" class="action-icon" />
+                                </button>
+                            }
+                        </div>
+
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+    <style>
+        .action-buttons {
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+        }
+
+        .action-icon {
+            width: 15px; 
+            height: 15px; 
+            object-fit: contain; 
+        }
+        button {
+            border: none;
+            background: none;
+            padding: 0; 
+            outline: none;
+        }
+
+            button img {
+                width: 10px; 
+                height: 10px; 
+            }
+
+    </style>

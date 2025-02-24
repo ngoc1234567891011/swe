@@ -1,0 +1,155 @@
+﻿@model project.Models.Employee
+
+@{
+    ViewBag.Title = "Thêm Nhân Viên";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h2 class="text-center mb-0">Thêm Nhân Viên</h2>
+        </div>
+
+        <div class="card-body">
+
+            @using (Html.BeginForm("Create", "QLNV", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+            <div class="form-container">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.tennv, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.tennv, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tennv, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.sdt, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.sdt, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.sdt, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.email, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.email, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.hinhanh, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.hinhanh, new { @type = "file", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.hinhanh, "", new { @class = "text-danger" })
+                    <div id="imagePreviewContainer" class="mt-3" style="display:none;">
+                        <img id="imagePreview" src="" alt="Image preview" class="img-fluid" style="max-width: 30%; height: auto;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.diachi, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.diachi, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.diachi, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.cccd, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.cccd, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.cccd, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.tinhtrang, new { @class = "form-label" })
+                    @Html.DropDownListFor(m => m.tinhtrang,
+                        new SelectList(new List<string> { "Đang làm", "Đã nghỉ" }),
+                        "- Chọn tình trạng -",
+                        new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.tinhtrang, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.mapq, new { @class = "form-label" })
+                    @Html.DropDownListFor(m => m.mapq, (IEnumerable<SelectListItem>)ViewBag.RoleList, "- Chọn Mã Quyền -", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.mapq, "", new { @class = "text-danger" })
+                </div>
+
+
+                <div class="form-group mb-3">
+                    @Html.LabelFor(m => m.matkhau, new { @class = "form-label" })
+                    @Html.PasswordFor(m => m.matkhau, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.matkhau, "", new { @class = "text-danger" })
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success me-2">Lưu</button>
+                    <a href="@Url.Action("Index", "QLNCC")" class="btn btn-secondary">Hủy</a>
+                </div>
+            </div>
+            }
+
+
+        </div>
+    </div>
+</div>
+
+
+<style>
+
+    .card {
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        font-size: 1.5rem;
+        text-align: center;
+        background-color: #007bff;
+        color: white;
+        border-bottom: 1px solid #ddd;
+        padding: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .form-group input {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: white;
+    }
+</style>
+<script>
+
+    document.getElementById('imageInput').addEventListener('change', function (event) {
+        var file = event.target.files[0];
+
+        if (file) {
+            var reader = new FileReader();
+
+            // Set the image preview once the file is loaded
+            reader.onload = function (e) {
+                var previewContainer = document.getElementById('imagePreviewContainer');
+                var previewImage = document.getElementById('imagePreview');
+
+                // Show the preview container and set the image source
+                previewContainer.style.display = 'block';
+                previewImage.src = e.target.result;
+            };
+
+            reader.readAsDataURL(file); // Read the selected file
+        }
+    });
+</script>

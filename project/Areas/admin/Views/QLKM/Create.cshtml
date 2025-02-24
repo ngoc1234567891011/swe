@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@model project.Models.Promotion
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h2 class="text-center mb-0">Thêm Khuyến Mãi Mới</h2>
+        </div>
+
+        <div class="card-body">
+            @using (Html.BeginForm("Create", "QLKM", FormMethod.Post))
+            {
+                <div class="form-group mb-3">
+                    <label for="ten_khuyen_mai" class="form-label">Tên Khuyến Mãi</label>
+                    @Html.TextBoxFor(m => m.ten_khuyen_mai, new { @class = "form-control", placeholder = "Nhập tên khuyến mãi" })
+                </div>
+                <div class="form-group">
+                    <label for="masp">Mã Sản Phẩm</label>
+                    @Html.DropDownListFor(m => m.masp, (IEnumerable<SelectListItem>)ViewBag.ProductList, "Chọn Sản Phẩm", new { @class = "form-select" })
+
+                </div>
+                <div class="form-group mb-3">
+                    <label for="dieu_kien" class="form-label">Giá trị</label>
+                    @Html.TextBoxFor(m => m.dieu_kien, new { @class = "form-control", placeholder = "Nhập điều kiện áp dụng" })
+                </div>
+                <div class="form-group mb-3">
+                    <label for="thoi_gianbd" class="form-label">Thời Gian Bắt Đầu</label>
+                    @Html.TextBoxFor(m => m.thoi_gianbd, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                </div>
+                <div class="form-group mb-3">
+                    <label for="thoi_giankt" class="form-label">Thời Gian Kết Thúc</label>
+                    @Html.TextBoxFor(m => m.thoi_giankt, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                </div>
+                <div class="form-group mb-3">
+                    <label for="trang_thai" class="form-label">Trạng Thái</label>
+                    @Html.DropDownListFor(m => m.trang_thai, new SelectList(new[] { "Đang còn", "Hết hạn" }), "Chọn Trạng Thái", new { @class = "form-select" })
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success me-2">Lưu</button>
+                    <a href="@Url.Action("Index", "QLKM")" class="btn btn-secondary">Hủy</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<style>
+
+    .card {
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        font-size: 1.5rem;
+        text-align: center;
+        background-color: #007bff;
+        color: white;
+        border-bottom: 1px solid #ddd;
+        padding: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .form-group input {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: white;
+    }
+
+</style>

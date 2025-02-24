@@ -1,0 +1,130 @@
+﻿@model IEnumerable<project.Models.Supplier>
+
+<style>
+    .search-container {
+        margin-left: auto;
+        margin-right: 10px;
+        width: 200px;
+    }
+
+    .search-input {
+        height: 35px;
+        font-size: 14px;
+    }
+</style>
+
+@{
+    ViewBag.Title = "Quản Lý Nhà Cung Cấp";
+}
+
+<h2></h2>
+<div class="container-fluid" data-aos="fade-up">
+
+    <div class="section-header">
+        <p>Nhà Cung Cấp</p>
+        <h7>
+            @Html.ActionLink("Thêm mới", "Create", "QLNCC", null, new { @class = "btn btn-primary" })
+        </h7>
+        <div class="pagetitle">
+            <nav class="d-flex">
+                
+                <div class="search-container">
+                    @using (Html.BeginForm("timkiem", "QLNCC", new { area = "admin" }, FormMethod.Get, new { @class = "form-inline" }))
+                    {
+                        <input type="text" class="form-control search-input" placeholder="Tìm kiếm" value="@ViewBag.Keyword" name="searchString">
+                    }
+                </div>
+            </nav>
+        </div>
+        <table class="table" data-aos="fade-up" data-aos-delay="100">
+            <!-- Hiển thị thông báo -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+            <tr data-aos="fade-up" data-aos-delay="500">
+                <th>
+                    @Html.DisplayNameFor(model => model.Mancc)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Tenncc)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Diachi)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sdt)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Mancc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tenncc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Diachi)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Sdt)
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="@Url.Action("Edit", new { id = item.Mancc })" class="btn btn-link">
+                                <img src='~/Content/img/icons8-edit-100.png' alt='Sửa' class="action-icon" />
+                            </a> |
+                            @using (Html.BeginForm("Delete", "QLNCC", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="Mancc" value="@item.Mancc" />
+                                <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa nhà cung cấp này?');">
+                                    <img src="~/Content/img/icons8-delete-30.png" alt="Xóa" class="action-icon" />
+                                </button>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+<style>
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .action-icon {
+        width: 15px;
+        height: 15px;
+        object-fit: contain;
+    }
+
+    button {
+        border: none;
+        background: none;
+        padding: 0;
+        outline: none;
+    }
+
+        button img {
+            width: 10px;
+            height: 10px;
+        }
+</style>

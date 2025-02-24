@@ -1,0 +1,42 @@
+﻿
+@{
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@model IEnumerable<project.Models.Order>
+@{
+    ViewBag.Title = "Danh sách đơn hàng";
+}
+
+<h2>Danh sách đơn hàng</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Mã đơn hàng</th>
+            <th>Ngày</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Ghi chú</th>
+            <th>Địa chỉ</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Madh</td>
+                <td>@order.Ngay.ToString("dd/MM/yyyy")</td>
+                <td>@string.Format("{0:N0}đ", order.TongTien)</td>
+                <td>@order.TrangThai</td>
+                <td>@order.GhiChu</td>
+                <td>@order.Diachi</td>
+                <td>
+                    @Html.ActionLink("Chi tiết", "Details", new { id = order.Madh })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

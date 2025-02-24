@@ -1,0 +1,146 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>SWE</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="~/Content/assets/img/favicon.png" rel="icon">
+    <link href="~/Content/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Amatic+SC:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="~/Content/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/Content/assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="~/Content/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="~/Content/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="~/Content/assets/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <a href="~/Admin/Admin" class="logo d-flex align-items-center me-auto me-lg-0">
+                <img src="~/Content/assets/img/logo.png" alt="">
+                <h1>SWE<span>.</span></h1>
+            </a>
+
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a href="~/Admin/Dashboard">Trang chủ</a></li>
+                    <li><a href="~/Admin/QLDM">Danh mục</a></li>
+                    <li><a href="~/Admin/QLSP">Sản phẩm</a></li>
+                    <li><a href="~/Admin/QLKH">Khách hàng</a></li>
+
+                    <li><a href="~/Admin/QLNCC">Nhà cung cấp</a></li>
+
+                    <li><a href="~/Admin/QLNV">Nhân viên</a></li>
+
+                    <li>
+                        <a href="@Url.Action("Index", "Doanhthu", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate })">Doanh thu</a>
+                    </li>
+
+                    <ul style="margin-left: 150px; float:right">
+                        @{
+                            var user = (project.Models.Employee)Session["ad"];
+                            if (user == null)
+                            {
+                                <li class="nav-item dropdown pe-3">
+                                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="~/register/login">
+                                        <img src="~/Content/img/user.png" alt="Profile" class="rounded-circle">
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item dropdown pe-3" style="float:right">
+                                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                                        <img src="~/Content/img/user.png" alt="Profile" class="rounded-circle">
+                                        <span class="d-none d-md-block dropdown-toggle ps-2">@user.manv</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style=" left: -60px;">
+                                        <li class="dropdown-header">
+                                            <h6>@user.tennv</h6>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                                                <i class="bi bi-person"></i>
+                                                <span>Hồ sơ</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center" href="@Url.Action("adlogin", "Ad", new { area = "admin" })">
+                                                <i class="bi bi-box-arrow-right"></i>
+                                                <span>Đăng xuất</span>
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                               </li>
+                            }
+                        }
+                    </ul>
+
+
+
+
+            </nav><!-- .navbar -->
+
+        </div>
+    </header><!-- End Header -->
+
+    <main id="main">
+
+        <!-- ======= About Section ======= -->
+        <section id="about" class="about">
+            @RenderBody()
+        </section><!-- End Contact Section -->
+
+    </main><!-- End #main -->
+    <!-- ======= Footer ======= -->
+
+
+    <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="~/Content/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/assets/vendor/aos/aos.js"></script>
+    <script src="~/Content/assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="~/Content/assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="~/Content/assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="~/Content/assets/vendor/php-email-form/validate.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="~/Content/assets/js/main.js"></script>
+    @RenderSection("Scripts", required: false)  <!-- Đây là phần để hiển thị các script trong view -->
+
+</body>
+
+</html>

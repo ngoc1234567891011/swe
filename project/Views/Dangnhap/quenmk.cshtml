@@ -1,0 +1,83 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    ViewBag.Title = "Quên mật khẩu";
+}
+<br />
+<section class="section forgot-password">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h3>Quên mật khẩu</h3>
+                <form id="forgotPasswordForm">
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" id="phoneNumber" placeholder="Nhập số điện thoại" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="sendOtpForPasswordReset">Gửi OTP</button>
+                </form>
+                <div id="otpSection" style="display:none;">
+                    <h4>Nhập mã OTP</h4>
+                    <form id="resetPasswordForm">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="inputOtp" placeholder="Nhập mã OTP" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" id="newPassword" placeholder="Nhập mật khẩu mới" required>
+                        </div>
+                        <button type="button" class="btn btn-success" id="resetPasswordButton">Cập nhật mật khẩu</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+
+        // Gửi yêu cầu OTP cho quên mật khẩu
+        $('#sendOtpForPasswordReset').click(function () {
+            var phoneNumber = $('#phoneNumber').val();
+
+            $.ajax({
+                url: '/Dangnhap/SendOtpForPasswordReset',
+                method: 'POST',
+                data: { phoneNumber: phoneNumber },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $('#otpSection').show(); 
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+
+        // Cập nhật mật khẩu mới
+        $('#resetPasswordButton').click(function () {
+            var inputOtp = $('#inputOtp').val();
+            var newPassword = $('#newPassword').val();
+            var phoneNumber = $('#phoneNumber').val();
+
+            $.ajax({
+                url: '/Dangnhap/ResetPassword',
+                method: 'POST',
+                data: { inputOtp: inputOtp, newPassword: newPassword, phoneNumber: phoneNumber },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        window.location.href = '/Dangnhap/login'; 
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+
+</script>
+
+

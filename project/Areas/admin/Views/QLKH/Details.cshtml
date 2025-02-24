@@ -1,0 +1,71 @@
+﻿@model project.Models.Customer
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card p-4">
+        <div class="card-header bg-danger text-white">
+            <h3>Thông tin khách hàng</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tr>
+                    <th class="table-red">Mã khách hàng</th>
+                    <td>@Model.makh</td>
+                </tr>
+                <tr>
+                    <th class="table-red">Tên khách hàng</th>
+                    <td>@Model.tenkh</td>
+                </tr>
+                <tr>
+                    <th class="table-">Số điện thoại</th>
+                    <td>@Model.sdt</td>
+                </tr>
+                <tr>
+                    <th class="table-red">Email</th>
+                    <td>@Model.email</td>
+                </tr>
+                <tr>
+                    <th class="table-red">Hình ảnh</th>
+                    <td>
+                        @if (!string.IsNullOrEmpty(Model.hinhanh))
+                        {
+                            <img src="~/Content/User/@Model.hinhanh" alt="Hình ảnh khách hàng" class="img-thumbnail" style="width: 100px; height: 100px;" />
+                        }
+                        else
+                        {
+                            <span>Không có hình ảnh</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-red">Địa chỉ</th>
+                    <td>@Model.diachi</td>
+                </tr>
+                <tr>
+                    <th class="table-red">Tỉnh/Thành</th>
+                    <td>@Model.ProvinceName</td>
+                </tr>
+                <tr>
+                    <th class="table-red">Quận/Huyện</th>
+                    <td>@Model.DistrictName</td>
+                </tr>
+                <tr>
+                    <th class="table-red">Phường/Xã</th>
+                    <td>@Model.WardName</td>
+                </tr>
+                <tr>
+                    <th class="table-red">Giới tính</th>
+                    <td>@Model.gioitinh</td>
+                </tr>
+                <tr>
+                    <th class="table-red">Năm sinh</th>
+                    <td>@Model.namsinh</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

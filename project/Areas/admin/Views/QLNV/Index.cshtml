@@ -1,0 +1,122 @@
+﻿@model IEnumerable<project.Models.Employee>
+
+<style>
+    .search-container {
+        margin-left: auto;
+        margin-right: 10px;
+        width: 200px;
+    }
+
+    .search-input {
+        height: 35px;
+        font-size: 14px;
+    }
+</style>
+
+@{
+    ViewBag.Title = "Quản lý nhân viên";
+}
+
+<h2></h2>
+
+<div class="container-fluid" data-aos="fade-up">
+    <div class="section-header">
+        <p>Nhân viên</p>
+        <h7>
+            @Html.ActionLink("Thêm mới", "Create")
+        </h7>
+        <div class="pagetitle">
+            <nav class="d-flex">
+                <div class="sp-container" style="float:left">
+                    @using (Html.BeginForm("sp", "Product", new { area = "Admin" }, FormMethod.Get, new { @class = "form-inline" }))
+                    {
+                        <button type="button" class="btn btn-warning rounded-pill"><a href="~/Admin/PQ/Index">Phân quyền</a></button>
+                    }
+                </div>
+                
+            </nav>
+        </div>
+        <table class="table" data-aos="fade-up" data-aos-delay="100">
+            <!-- Hiển thị thông báo -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.tennv)</th>
+                <th>@Html.DisplayNameFor(model => model.sdt)</th>
+                <th>@Html.DisplayNameFor(model => model.email)</th>
+                <th>@Html.DisplayNameFor(model => model.hinhanh)</th>
+                <th>@Html.DisplayNameFor(model => model.diachi)</th>
+                <th>@Html.DisplayNameFor(model => model.cccd)</th>
+                <th>@Html.DisplayNameFor(model => model.tinhtrang)</th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.tennv)</td>
+                    <td>@Html.DisplayFor(modelItem => item.sdt)</td>
+                    <td>@Html.DisplayFor(modelItem => item.email)</td>
+                    <td>
+                        <img style="width:120px; height:120px" src="~/Content/img/@item.hinhanh" />
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.diachi)</td>
+                    <td>@Html.DisplayFor(modelItem => item.cccd)</td>
+                    <td>@Html.DisplayFor(modelItem => item.tinhtrang)</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="@Url.Action("Edit", new { id = item.manv })" class="btn btn-link">
+                                <img src='~/Content/img/icons8-edit-100.png' alt='Sửa' class="action-icon" />
+                            </a> |
+                            @using (Html.BeginForm("Delete", "QLNV", new { manv = item.manv }, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="manv" value="@item.manv" /> 
+                                <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa nhân viên?');">
+                                    <img src="~/Content/img/icons8-delete-30.png" alt="Xóa" class="action-icon" />
+                                </button>
+                            }
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+<style>
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .action-icon {
+        width: 15px;
+        height: 15px;
+        object-fit: contain;
+    }
+
+    button {
+        border: none;
+        background: none;
+        padding: 0;
+        outline: none;
+    }
+
+        button img {
+            width: 10px;
+            height: 10px;
+        }
+</style>

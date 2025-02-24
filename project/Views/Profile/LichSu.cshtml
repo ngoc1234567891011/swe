@@ -1,0 +1,62 @@
+﻿@model IEnumerable<project.Models.Order>
+@{
+    ViewBag.Title = "LichSu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    int index = 1;
+}
+<br />
+<br />
+
+<div class="container-fluid" data-aos="fade-up">
+    <br />
+    <br />
+
+    <div class="pagetitle" style="margin-left:50px">
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="~/Home"><i class="bi bi-house-door"></i></a></li>
+                <li class="breadcrumb-item active">Lịch sử mua hàng</li>
+            </ol>
+        </nav>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div style="margin:10px 10px 200px 10px;text-align:center">
+            Không có đơn hàng nào.
+        </div>
+    }
+    else
+    {
+        <div class="section-header">
+            <table class="table">
+                <tr>
+                    <th>Số thứ tự</th>
+                    <th>Ngày</th>
+                    <th>Tổng tiền</th>
+                    <th>Địa chỉ</th>
+                    <th>Ghi chú</th>
+                    <th>Hành động</th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@index</td>
+                        <td>@(item.Ngay.ToString("dd/MM/yyyy"))</td>
+                        <td>@string.Format("{0:N0}đ", item.TongTien)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Diachi)</td>
+                        <td>@Html.DisplayFor(modelItem => item.GhiChu)</td>
+                        <td>
+                            @Html.ActionLink("Chi tiết", "Details", new { id = item.Madh })
+                        </td>
+                    </tr>
+                    index++;
+                }
+            </table>
+        </div>
+    }
+</div>

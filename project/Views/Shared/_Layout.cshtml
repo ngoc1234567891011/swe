@@ -1,0 +1,236 @@
+﻿
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>SWE</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="~/Content/assets/img/favicon.png" rel="icon">
+    <link href="~/Content/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Amatic+SC:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="~/Content/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/Content/assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="~/Content/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="~/Content/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="~/Content/assets/css/main.css" rel="stylesheet">
+    <script partner-id="pp168990e044ecc3e868b178ee" src="https://www.zyler.com/js/go-integration/v1/index.js"></script>
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <a href="~/Home" class="logo d-flex align-items-center me-auto me-lg-0">
+                <!-- Uncomment the line below if you also wish to use an image logo -->
+                <img src="~/Content/assets/img/logo.png" alt="">
+                <h1>SWE<span>.</span></h1>
+            </a>
+
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a href="~/Home">Trang chủ</a></li>
+                    <li class="dropdown">
+                        <a href="~/SanPham/Index"><span>Sản phẩm</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+                        <ul>
+                            <li><a href="~/SanPham/Index?categoryId=1">Áo thun</a></li>
+                            <li><a href="~/SanPham/Index?categoryId=2">Áo polo</a></li>
+                            <li><a href="~/SanPham/Index?categoryId=3">Áo sơ mi</a></li>
+                            
+                        </ul>
+                    </li>
+
+                    <li><a href="~/lienhe/contact">Liên hệ</a></li>
+
+                    <li class="nav-item dropdown pe-3" style="margin-left: 400px; float:right">
+                        @{
+                            var user = (project.Models.Customer)HttpContext.Current.Session["user"] ;
+                            if (@user == null)
+                            {
+                            <li class="nav-item dropdown pe-3">
+                                <a class="nav-link nav-profile d-flex align-items-center pe-0" href="~/Dangnhap/login">
+                                    <img src="~/Content/img/user.png" alt="Profile" class="rounded-circle">
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item dropdown pe-3" style="float:right">
+                                <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                                    <img src="@(!string.IsNullOrEmpty(user.hinhanh) && user.hinhanh.StartsWith("http") ? user.hinhanh : Url.Content("~/Content/user/" + (user.hinhanh ?? "default.png")))" class="rounded-circle" style="width:50px" />
+                                    <span class="d-none d-md-block dropdown-toggle ps-2">@user.tenkh</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style=" left: -60px;">
+                                    <li class="dropdown-header">
+                                        <h6 style="text-align:center">@user.tenkh</h6>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+                                    <li>
+                                        @if (Session["user"] != null)
+                                        {
+                                            var currentUser = (project.Models.Customer)HttpContext.Current.Session["user"];
+                                            <a class="dropdown-item d-flex align-items-center" href="@Url.Action("User", "Profile", new { id = currentUser.makh })">
+                                                <img src="~/Content/img/icons8-edit-profile-20.png" alt="Edit Profile" />
+                                                <span>Hồ sơ</span>
+                                            </a>
+                                        }
+                                    </li>
+
+
+
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center" href="~/Profile/LichSu">
+                                            <img src="~/Content/img/icons8-delivery-20.png" />
+                                            <span>Lịch sử mua hàng</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center" href="@Url.Action("dangxuat", "Dangnhap", new { area = "" })">
+                                            <img src="~/Content/img/icons8-logout-20.png" />
+                                            <span>Đăng xuất</span>
+                                        </a>
+
+                                    </li>
+
+                                </ul>
+                            </li><!-- End Profile Nav -->
+                        }
+                        }
+                        <li style="margin-left:-30px;">
+                            <a href="~/ShoppingCart/Show">
+                                <img src="~/Content/img/add-to-basket.png" alt="Profile">
+                            </a>
+                        </li>
+                        <li style="margin-left:-15px">
+                            <a href="~/Favorite/Show">
+                                <img src="~/Content/img/icons8-heart-24.png" alt="Profile">
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+
+
+        <main id="main">
+
+            @RenderBody()
+        </main><!-- End #main -->
+        <!-- ======= Footer ======= -->
+        <footer id="footer" class="footer">
+
+            <div class="container">
+                <div class="row gy-3">
+                    <div class="col-lg-3 col-md-6 d-flex">
+                        <i class="bi bi-geo-alt icon"></i>
+                        <div>
+                            <h4>Địa chỉ</h4>
+                            <p>
+                                136 Đ. Nguyễn Hồng Đào<br />
+                                Phường 14, Tân Bình<br />
+                                Thành phố Hồ Chí Minh
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 footer-links d-flex">
+                        <i class="bi bi-telephone icon"></i>
+                        <div>
+                            <h4>Liên hệ</h4>
+                            <p>
+                                <strong>Điện thoại:</strong> +84 55 488 355<br>
+                                <strong>Email:</strong> info@example.com<br>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 footer-links d-flex">
+                        <i class="bi bi-clock icon"></i>
+                        <div>
+                            <h4>Giờ mở cửa</h4>
+                            <p>
+                                <strong>11AM</strong> - 23PM<br>
+                                Mỗi ngày
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 footer-links">
+                        <h4>Theo dõi</h4>
+                        <div class="social-links d-flex">
+                            <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="copyright">
+                    &copy; Copyright <strong><span>SWE</span></strong>. All Rights Reserved
+                </div>
+                <div class="credits">
+                    <!-- All the links in the footer should remain intact. -->
+                    <!-- You can delete the links only if you purchased the pro version. -->
+                    <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                    <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/yummy-bootstrap-restaurant-website-template/ -->
+
+                </div>
+            </div>
+
+        </footer><!-- End Footer -->
+        <!-- End Footer -->
+
+        <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+        <div id="preloader"></div>
+
+        <!-- Vendor JS Files -->
+        <script src="~/Content/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="~/Content/assets/vendor/aos/aos.js"></script>
+        <script src="~/Content/assets/vendor/glightbox/js/glightbox.min.js"></script>
+        <script src="~/Content/assets/vendor/purecounter/purecounter_vanilla.js"></script>
+        <script src="~/Content/assets/vendor/swiper/swiper-bundle.min.js"></script>
+        <script src="~/Content/assets/vendor/php-email-form/validate.js"></script>
+
+        <!-- Template Main JS File -->
+        <script src="~/Content/assets/js/main.js"></script>
+
+    </body>
+
+</html>

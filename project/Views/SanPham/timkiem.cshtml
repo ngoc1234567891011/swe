@@ -1,0 +1,113 @@
+﻿@model IEnumerable<project.Models.Product>
+
+@{
+    ViewBag.Title = "timkiem";
+}
+
+<style>
+    .menu-item {
+        position: relative;
+    }
+
+    .heart-icon {
+        position: absolute;
+        top: 0;
+        right: 70px;
+    }
+
+    .cart-icon {
+        position: absolute;
+        top: 235px;
+        left: 100px;
+    }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        font-size: 20px;
+    }
+
+    .price-container {
+        text-align: right;
+    }
+
+    .search-container {
+        margin-left: auto;
+        margin-right: 10px;
+        width: 150px;
+    }
+
+    .search-input {
+        height: 35px;
+        font-size: 14px;
+    }
+</style>
+<section id="menu" class="menu">
+    <div class="container" data-aos="fade-up">
+        <div class="section-header">
+            <br />
+            <div class="pagetitle">
+                <nav class="d-flex">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="~/Home"><i class="bi bi-house-door"></i></a></li>
+                        <li class="breadcrumb-item active">Cửa hàng</li>
+                    </ol>
+                    <div class="search-container">
+                        @using (Html.BeginForm("timkiem", "SanPham", FormMethod.Get, new { @class = "form-inline" }))
+                        {
+                            <input type="text" class="form-control search-input" placeholder="Tìm kiếm" value="@ViewBag.Keyword" name="searchString">
+                        }
+                    </div>
+                </nav>
+            </div>
+
+
+            <p><span>sản phẩm</span></p>
+        </div>
+        <div class="tab-content" data-aos="fade-up" data-aos-delay="300">
+
+            <div class="row gy-5">
+                @foreach (var product in Model)
+                {
+                    <div class="col-lg-4 menu-item">
+                        <a href="~/Content/images/@product.hinhanh" class="glightbox"><img src="~/Content/images/@product.hinhanh" class="menu-img img-fluid" alt=""></a>
+                        <span class="heart-icon">
+                            @if (Session["FavItem"] != null && ((List<int>)Session["FavItem"]).Contains(product.masp))
+                            {
+                                <a class="btn" href="~/Favorite/remove/@product.masp">
+                                    <img class="heartImage" src="~/Content/img/icons8-heart-black.png" alt="">
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="btn" href="~/Favorite/Add/@product.masp">
+                                    <img class="heartImage" src="~/Content/img/icons8-heart-24.png" alt="">
+                                </a>
+                            }
+                        </span>
+
+                        <div class="product-info">
+                            <span class="cart-icon">
+                                <a class="btn" href="~/ShoppingCart/AddToCart/@product.masp?quantity=1">
+                                    <img src="~/Content/img/icons8-add-shopping-cart-24.png" alt="">
+                                </a>
+                            </span>
+                            <h4>
+                                <a style="color: black; font-size: 12px;" href="@Url.Action("Details", new { id = product.masp })">@product.tensp</a>
+                            </h4>
+                            <div class="price-container">
+                                <p style="font-size: 15px;" class="price">
+                                    @(product.gia?.ToString("N0")) đ
+                                    <br />
+                                    <i style="text-decoration: line-through; opacity: 0.5;">200 000 đ</i>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+

@@ -1,0 +1,19 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.Title = "Kết quả thanh toán";
+}
+@{
+    ViewBag.Title = "VNPAY Return";
+}
+
+<h2>@ViewBag.Message</h2>
+
+<div>
+    <p>@ViewBag.TerminalID</p>
+    <p>@ViewBag.TransactionRef</p>
+    <p>@ViewBag.VnpayTransactionNo</p>
+    <p>@ViewBag.Amount</p>
+    <p>@ViewBag.BankCode</p>
+</div>

@@ -1,0 +1,172 @@
+﻿@model project.Models.Customer
+@{
+    ViewBag.Title = "Đăng ký";
+}
+
+<section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+    <div class="container">
+        <div class="pagetitle">
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="~/Home"><i class="bi bi-house-door"></i></a></li>
+                    <li class="breadcrumb-item active">Đăng ký</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                <div class="card mb-3">
+                    <div class="card-body" style="width:550px">
+
+                        @* Hiển thị lỗi nếu có *@
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        @if (ViewBag.Error != null)
+                        {
+                            <div class="alert alert-danger">@ViewBag.Error</div>
+                        }
+                        @if (ViewBag.Success != null)
+                        {
+                            <div class="alert alert-success">@ViewBag.Success</div>
+                        }
+
+                        @* Bước 1: Form đăng ký *@
+                        @using (Html.BeginForm("register", "Dangnhap", FormMethod.Post, new { enctype = "multipart/form-data", id = "registerForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div id="step1">
+                                <div class="pt-4 pb-2">
+                                    <h5 class="card-title text-center pb-0 fs-4">ĐĂNG KÝ</h5>
+                                    <p class="text-center small">Vui lòng điền thông tin để đăng ký</p>
+                                </div>
+                                <div class="row g-3 needs-validation" novalidate>
+                                    <div class="col-12">
+                                        <label for="yourName" class="form-label">Tên đăng nhập</label>
+                                        <div class="input-group has-validation">
+                                            <span class="input-group-text" id="inputGroupPrepend"><i class="bi bi-person"></i></span>
+                                            @Html.TextBoxFor(model => model.tenkh, new { @class = "form-control", placeholder = "Tên đăng nhập", @required = "required" , id = "username" })
+                                            <div class="invalid-feedback">Vui lòng điền tên đăng nhập!</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="yourSdt" class="form-label">Số điện thoại</label>
+                                        <div class="input-group has-validation">
+                                            <span class="input-group-text" id="inputGroupPrepend"><i class="bi bi-phone"></i></span>
+                                            @Html.TextBoxFor(model => model.sdt, new { @class = "form-control", placeholder = "Số điện thoại", @required = "required", id = "phoneNumber" })
+                                            <div class="invalid-feedback">Vui lòng điền số điện thoại!</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="yourPassword" class="form-label">Mật khẩu</label>
+                                        <div class="input-group has-validation">
+                                            <span class="input-group-text" id="inputGroupPrepend"><i class="bi bi-lock"></i></span>
+                                            @Html.PasswordFor(model => model.matkhau, new { @class = "form-control", placeholder = "Mật khẩu", @required = "required", id = "password" })
+                                            <div class="invalid-feedback">Vui lòng điền mật khẩu!</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12" style="margin-top: 20px">
+                                        <button class="btn btn-primary w-100" type="button" id="sendOtpButton">Gửi mã OTP</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @* Bước 2: Form xác minh OTP *@
+                        @using (Html.BeginForm("VerifyOtp", "Dangnhap", FormMethod.Post, new { id = "otpForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div id="step2" style="display: none;">
+                                <div class="pt-4 pb-2">
+                                    <h5 class="card-title text-center pb-0 fs-4">XÁC MINH OTP</h5>
+                                    <p class="text-center small">Nhập mã OTP đã gửi tới số điện thoại của bạn</p>
+                                </div>
+
+                                <div class="row g-3 needs-validation" novalidate>
+                                    <div class="col-12">
+                                        <label for="inputOtp" class="form-label">Mã OTP</label>
+                                        <div class="input-group has-validation">
+                                            <span class="input-group-text" id="inputGroupPrepend"><i class="bi bi-shield-check"></i></span>
+                                            <input type="text" name="inputOtp" class="form-control" placeholder="Nhập mã OTP" required id="inputOtp" />
+                                            <div class="invalid-feedback">Vui lòng nhập mã OTP!</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12" style="margin-top: 20px">
+                                        <button class="btn btn-success w-100" type="submit" id="verifyOtpButton">Xác minh</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                        <div class="col-12">
+                            <p class="small mb-0">Bạn đã có tài khoản? <a href="~/Dangnhap/login">Đăng nhập</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#sendOtpButton').click(function () {
+            var phoneNumber = $('#phoneNumber').val();  // Lấy số điện thoại từ input
+
+            // Gửi yêu cầu AJAX tới API gửi OTP
+            $.ajax({
+                url: '/Dangnhap/SendOtp',  // Route gửi OTP
+                method: 'POST',
+                data: { phoneNumber: phoneNumber },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);  // Hiển thị thông báo thành công
+                        $('#step2').show();  // Hiển thị form xác minh OTP
+                    } else {
+                        alert(response.message);  // Hiển thị lỗi nếu có
+                    }
+                }
+            });
+        });
+
+        $('#verifyOtpButton').click(function () {
+            var inputOtp = $('#inputOtp').val();  // Lấy OTP người dùng nhập
+            var phoneNumber = $('#phoneNumber').val();  // Lấy số điện thoại người dùng
+            var username = $('#username').val();  // Lấy tên người dùng
+            var password = $('#password').val();  // Lấy mật khẩu người dùng
+
+            // Gửi yêu cầu AJAX xác minh OTP
+            $.ajax({
+                url: '/Dangnhap/VerifyOtp',  // Route xác minh OTP
+                method: 'POST',
+                data: {
+                    inputOtp: inputOtp,
+                    phoneNumber: phoneNumber,
+                    username: username,
+                    password: password
+                },  // Truyền OTP, số điện thoại, tên và mật khẩu
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);  // Thông báo thành công
+                        // Chuyển đến trang đăng nhập
+                        window.location.href = '/Dangnhap/Login';
+                    } else {
+                        alert(response.message);  // Thông báo lỗi
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('Đã có lỗi xảy ra. Vui lòng thử lại!');
+                }
+            });
+        });
+
+
+    });
+</script>

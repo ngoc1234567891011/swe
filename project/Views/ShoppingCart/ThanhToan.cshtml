@@ -1,0 +1,146 @@
+﻿@using project.Models
+@{
+    getUser userHelper = new getUser();
+}
+@model project.Models.Cart
+@{
+    var user = (project.Models.Customer)HttpContext.Current.Session["user"];
+    var u = userHelper.GetById(user.makh);
+}
+</br>
+</br>
+<section id="about" class="about">
+    <div class="container" data-aos="fade-up">
+        <div class="section-header">
+            <div class="pagetitle">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="~/Home"><i class="bi bi-house-door"></i></a></li>
+                        <li class="breadcrumb-item"><a href="~/ShoppingCart/Show">Giỏ hàng</a></li>
+                        <li class="breadcrumb-item active">Thanh toán</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row gy-4">
+            <div class="col-lg-7" data-aos="fade-up" data-aos-delay="150" style="border-right: 1px solid rgba(0, 0, 0, 0.5);">
+                @if (TempData["Message"] != null)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        @TempData["Message"]
+                    </div>
+                }
+                <div class="col-lg-12">
+                    <div class="row mb-3">
+                        <div class="col-lg-4">
+                            <strong>Tên:</strong>
+                        </div>
+                        <div class="col-lg-8">
+                            @(!string.IsNullOrEmpty(u.tenkh) ? u.tenkh : "")
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-4">
+                            <strong>Số điện thoại:</strong>
+                        </div>
+                        <div class="col-lg-8">
+                            @(!string.IsNullOrEmpty(u.sdt) ? u.sdt : "")
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-4">
+                            <strong>Email:</strong>
+                        </div>
+                        <div class="col-lg-8">
+                            @(!string.IsNullOrEmpty(u.email) ? u.email : "")
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-4">
+                            <strong>Địa chỉ:</strong>
+                        </div>
+                        <div class="col-lg-8">
+                            @(!string.IsNullOrEmpty(u.diachi) ? u.diachi : ""), @(!string.IsNullOrEmpty(u.WardName) ? u.WardName : ""), @(!string.IsNullOrEmpty(u.DistrictName) ? u.DistrictName : ""), @(!string.IsNullOrEmpty(u.ProvinceName) ? u.ProvinceName : "")
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+
+                @using (Html.BeginForm("DatHang", "ShoppingCart"))
+                {
+                    <div class="row mb-3">
+                        <label for="inputText" class="col-sm-2 col-form-label">Ghi chú</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="notes">
+                        </div>
+                    </div>
+
+                    <br />
+
+
+                    <div class="col-lg-12">
+                        <button style="float:left" type="button" class="btn btn-outline-secondary"><a href="~/Profile/user/@u.makh">Chỉnh sửa</a></button>
+                        <button style="float:right" type="button" class="btn btn-outline-secondary">
+                            <a href="@Url.Action("VnPayPayment", "ShoppingCart")" onclick="return checkCustomerInfo()">Thanh toán VNPAY</a>
+                        </button>
+
+
+                        <button style="float:right; margin-right:5px" type="button" class="btn btn-outline-secondary">
+                            <a href="~/ShoppingCart/DatHang" onclick="return checkCustomerInfo()">Thanh toán khi nhận hàng</a>
+                        </button>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-5" data-aos="fade-up" data-aos-delay="300">
+                <div class="row" style="display: flex; align-items: baseline;">
+                    @if (Model != null && Model.Items != null)
+                    {
+
+                        foreach (var item in Model.Items)
+                        {
+                            decimal price = item.DiscountedPrice; 
+
+                            <div class="col-lg-2">
+                                <img src="~/Content/images/@item.shopping_sp.hinhanh" style="width:70px" />
+                            </div>
+                            <div class="col-lg-7">
+                                <h7>@item.shopping_sp.tensp  &nbsp;x    @item.shopping_sl</h7>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <h6> @(price.ToString("N0")) đ</h6>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Không có sản phẩm nào trong giỏ hàng.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script type="text/javascript">
+    // Hàm kiểm tra thông tin khách hàng
+    function checkCustomerInfo(action) {
+        // Giả sử Model.Customer chứa thông tin khách hàng
+        var customer = {
+            tenkh: '@u.tenkh',
+            sdt: '@u.sdt',
+            email: '@u.email',
+            diachi: '@u.diachi'
+        };
+
+        // Kiểm tra nếu thông tin của khách hàng thiếu
+        if (!customer.tenkh || !customer.sdt || !customer.email || !customer.diachi) {
+            alert("Vui lòng cập nhật đầy đủ thông tin khách hàng trước khi tiếp tục.");
+            return false; // Nếu thiếu thông tin, không chuyển hướng
+        }
+
+        // Nếu đủ thông tin, tiếp tục với hành động
+        return true;
+    }
+</script>

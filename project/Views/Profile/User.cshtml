@@ -1,0 +1,254 @@
+﻿@model project.Models.Customer
+
+@{
+    ViewBag.Title = "User Profile";
+}
+<style>
+    label.control-label {
+        color: #000; 
+    }
+
+    .form-control {
+        color: #000;
+        border-color: #000;
+        margin-bottom: 20px;
+    }
+
+    .text-danger {
+        color: #f00; 
+    }
+
+    .btn {
+        color: #fff;
+        background-color: #f00; 
+        border-color: #f00;
+    }
+</style>
+<br />
+<br />
+
+@using (Html.BeginForm("User", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <section id="about" class="about">
+        <div class="container" data-aos="fade-up">
+            <div class="pagetitle">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="~/Home"><i class="bi bi-house-door"></i></a></li>
+                        <li class="breadcrumb-item active">Hồ sơ</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="section-header">
+                <p>Hồ sơ</p>
+            </div>
+
+            <div class="row gy-4">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.makh)
+                @Html.Hidden("province_code", "", new { id = "hiddenProvince" })
+                @Html.Hidden("district_code", "", new { id = "hiddenDistrict" })
+                @Html.Hidden("ward_code", "", new { id = "hiddenWard" })
+
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="150">
+                    <div class="row mb-3">
+                        @Html.LabelFor(model => model.tenkh, "Họ và tên", htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.tenkh, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.tenkh, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+
+
+                    <div class="row mb-3">
+                        @Html.LabelFor(model => model.hinhanh, "Ảnh đại diện", htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-5">
+                            @if (!string.IsNullOrEmpty(Model.hinhanh) && (Model.hinhanh.StartsWith("http", StringComparison.OrdinalIgnoreCase)))
+                            {
+                                <img src="@Model.hinhanh" style="width:100px" alt="Profile" style="background-color: white; border-color: black;" />
+                            }
+                            else
+                            {
+                                <img src="~/Content/user/@Model.hinhanh" style="width:100px" alt="Profile" style="background-color: white; border-color: black;" />
+                            }
+
+                            <div class="pt-2">
+                                <!-- Đổi thành input file -->
+                                <input type="file" name="avatar" class="form-control" />
+                                @Html.Hidden("oldimage", @Model.hinhanh)
+                                @Html.ValidationMessageFor(model => model.hinhanh, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
+                    <!-- Email -->
+                    <div class="row mb-3">
+                        @Html.LabelFor(model => model.email, "Email", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control", value = (Model.email == "null" ? "" : Model.email) ?? "" } })
+                            @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+
+
+                    <!-- Số điện thoại -->
+                    <div class="row mb-3">
+                        @Html.LabelFor(model => model.sdt, "Số điện thoại", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.sdt, new { htmlAttributes = new { @class = "form-control", value = Model.sdt ?? "" } })
+                            @Html.ValidationMessageFor(model => model.sdt, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <!-- Năm sinh -->
+                    <div class="row mb-3">
+                        @Html.LabelFor(model => model.namsinh, "Năm sinh", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.namsinh, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.namsinh, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <!-- Giới tính -->
+                    <div class="row mb-3">
+                        @Html.LabelFor(model => model.gioitinh, "Giới tính", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            <select class="form-control" id="gioitinh" name="gioitinh">
+                                <option value="Nam" @(Model.gioitinh == "Nam" ? "selected" : "")>Nam</option>
+                                <option value="Nữ" @(Model.gioitinh == "Nữ" ? "selected" : "")>Nữ</option>
+                            </select>
+                            @Html.ValidationMessageFor(model => model.gioitinh, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <!-- Địa chỉ và các trường liên quan -->
+                    <div class="row mb-4">
+                        <label>Địa chỉ</label>
+
+                        <!-- Các trường Tỉnh/Quận/Phường: Đảm bảo nằm trên cùng một dòng -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select id="province" name="province_code" class="form-control">
+                                    <option value="">Chọn Tỉnh/Thành phố</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="district" name="district_code" class="form-control">
+                                    <option value="">Chọn Quận/Huyện</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="ward" name="ward_code" class="form-control">
+                                    <option value="">Chọn Phường/Xã</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Ẩn các mã tỉnh/huyện/phường -->
+                        <input type="hidden" id="hiddenProvince" name="province_code" />
+                        <input type="hidden" id="hiddenDistrict" name="district_code" />
+                        <input type="hidden" id="hiddenWard" name="ward_code" />
+
+                        <!-- Đường/số nhà -->
+                        <div class="row mb-3">
+                            @Html.LabelFor(model => model.diachi, "Đường/số nhà", htmlAttributes: new { @class = "control-label col-md-4" })
+                            <div class="col-md-8">
+                                @Html.TextAreaFor(model => model.diachi, new { @class = "form-control", value = Model.diachi ?? "" })
+                                @Html.ValidationMessageFor(model => model.diachi, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="text-center">
+                        <input type="submit" value="Lưu" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+    </section>
+}
+
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+    // Load provinces
+    $.getJSON('@Url.Action("GetProvinces", "Profile")', function (data) {
+        var provinceDropdown = $('#province');
+        provinceDropdown.empty().append('<option value="">Chọn Tỉnh/Thành phố</option>');
+        $.each(data, function (index, item) {
+            provinceDropdown.append($('<option></option>').val(item.Value).html(item.Text));
+        });
+
+        // Set selected value from model
+        var selectedProvince = '@Model.province_code';
+        if (selectedProvince) {
+            provinceDropdown.val(selectedProvince).change();
+        }
+    });
+
+    // Load districts based on selected province
+    $('#province').change(function () {
+        var provinceCode = $(this).val();
+        $('#hiddenProvince').val(provinceCode);  // Update hidden field
+
+        $.getJSON('@Url.Action("GetDistricts", "Profile")', { provinceCode: provinceCode }, function (data) {
+            var districtDropdown = $('#district');
+            districtDropdown.empty().append('<option value="">Chọn Quận/Huyện</option>');
+            $.each(data, function (index, item) {
+                districtDropdown.append($('<option></option>').val(item.Value).html(item.Text));
+            });
+
+            // Set selected value from model
+            var selectedDistrict = '@Model.district_code';
+            if (selectedDistrict) {
+                districtDropdown.val(selectedDistrict).change();
+            }
+        });
+
+        // Reset wards dropdown and hidden field
+        $('#ward').empty().append('<option value="">Chọn Phường/Xã</option>');
+        $('#hiddenDistrict').val('');  // Clear hidden field
+        $('#hiddenWard').val('');      // Clear hidden field
+    });
+
+    // Load wards based on selected district
+    $('#district').change(function () {
+        var districtCode = $(this).val();
+        $('#hiddenDistrict').val(districtCode);  // Update hidden field
+
+        $.getJSON('@Url.Action("GetWards", "Profile")', { districtCode: districtCode }, function (data) {
+            var wardDropdown = $('#ward');
+            wardDropdown.empty().append('<option value="">Chọn Phường/Xã</option>');
+            $.each(data, function (index, item) {
+                wardDropdown.append($('<option></option>').val(item.Value).html(item.Text));
+            });
+
+            // Set selected value from model
+            var selectedWard = '@Model.ward_code';
+            if (selectedWard) {
+                wardDropdown.val(selectedWard);
+            }
+        });
+
+        // Reset hidden ward field
+        $('#hiddenWard').val('');  // Clear hidden field
+    });
+        $('#ward').change(function () {
+            var wardCode = $(this).val();
+            $('#hiddenWard').val(wardCode);  // Cập nhật hidden field
+        });
+    // Initialize hidden fields
+    $('#hiddenProvince').val('@Model.province_code');
+    $('#hiddenDistrict').val('@Model.district_code');
+    $('#hiddenWard').val('@Model.ward_code');
+});
+
+</script>

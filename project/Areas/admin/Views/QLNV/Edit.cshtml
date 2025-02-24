@@ -1,0 +1,134 @@
+﻿@model project.Models.Employee
+
+@{
+    ViewBag.Title = "Chỉnh sửa Nhân Viên";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+
+    <div class="card p-4">
+        <div class="card-header bg-danger text-white text-center">
+            <h2>Sửa Nhân Viên</h2>
+        </div>
+        @using (Html.BeginForm("Edit", "QLNhanVien", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.manv)
+    <div class="form-container">
+        <div class="form-group">
+            @Html.LabelFor(m => m.tennv, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.tennv, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.tennv, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.sdt, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.sdt, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.sdt, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.email, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.email, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.email, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.hinhanh, htmlAttributes: new { @class = "control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.hinhanh, null, new { type = "file", @class = "btn btn-light", @style = "background-color: white;   border-color: black;" })
+                <img src="~/Content/user/@Model.hinhanh" style="width:150px" />
+                @Html.Hidden("oldhinhanh", @Model.hinhanh)
+                @Html.ValidationMessageFor(model => model.hinhanh, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.diachi, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.diachi, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.diachi, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.cccd, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.cccd, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.cccd, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.tinhtrang, new { @class = "form-label" })
+            @Html.DropDownListFor(
+                m => m.tinhtrang,
+                new SelectList(
+                    new List<string> { "Danglam", "Nghi lam" },
+                    Model.tinhtrang
+                ),
+                new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.tinhtrang, "", new { @class = "text-danger" })
+        </div>
+
+
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.mapq, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.mapq, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.mapq, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group mb-3">
+            @Html.LabelFor(m => m.matkhau, new { @class = "form-label" })
+            @Html.PasswordFor(m => m.matkhau, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.matkhau, "", new { @class = "text-danger" })
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-success me-2">Lưu</button>
+            <a href="@Url.Action("Index", "QLNV")" class="btn btn-secondary">Hủy</a>
+        </div>
+
+    </div>
+        }
+        </div>
+    </div>
+
+        <style>
+
+            .card {
+                border-radius: 10px;
+                border: 1px solid #ddd;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .card-header {
+                font-size: 1.5rem;
+                text-align: center;
+                background-color: #007bff;
+                color: white;
+                border-bottom: 1px solid #ddd;
+                padding: 15px;
+            }
+
+            .form-group label {
+                font-weight: bold;
+                margin-bottom: 5px;
+                display: block;
+            }
+
+            .form-group input {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px;
+                width: 100%;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                border-radius: 5px;
+            }
+
+            .btn-success {
+                background-color: #28a745;
+                border: none;
+                color: white;
+            }
+
+            .btn-secondary {
+                background-color: #6c757d;
+                border: none;
+                color: white;
+            }
+        </style>

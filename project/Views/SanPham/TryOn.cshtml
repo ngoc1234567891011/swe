@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thử Đồ</title>
+    @Html.Raw("<script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs'></script>")
+    @Html.Raw("<script src='https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet'></script>")
+</head>
+<body>
+    <div id="tryon-modal" style="display:none;">
+        <h2>Thử đồ</h2>
+        <p>Chọn ảnh của bạn để thử áo:</p>
+        <input type="file" id="user-image-input" accept="image/*" />
+        <br>
+        <canvas id="canvas" style="display:none;"></canvas>
+        <img id="product-image" alt="Ảnh sản phẩm" style="display:none;" />
+        <button onclick="closeTryOnModal()">Đóng</button>
+    </div>
+
+
+    <script>
+        function openTryOnModal(masp) {
+            const modal = document.getElementById('tryon-modal');
+            if (!modal) {
+                console.error('Modal not found');
+                return; // Nếu modal không tồn tại, thoát khỏi hàm
+            }
+
+            modal.style.display = 'block'; // Hiện modal
+
+            // Gửi yêu cầu đến server để lấy ảnh sản phẩm
+            fetch(`/SanPham/TryOn/${masp}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.productImage) {
+                        const productImage = document.getElementById('product-image');
+                        if (productImage) {
+                            productImage.src = data.productImage; // Gán hình ảnh sản phẩm
+                            productImage.style.display = 'block'; // Hiện hình ảnh sản phẩm
+                        } else {
+                            console.error('Product image element not found');
+                        }
+                    } else {
+                        alert('Không tìm thấy hình ảnh sản phẩm.');
+                    }
+                })
+                .catch(error => console.error('Error fetching product image:', error));
+        }
+
+        document.getElementById('user-image-input').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const userImage = document.createElement('img');
+                userImage.src = e.target.result;
+                userImage.onload = function () {
+                    runPoseNetAndOverlayShirt(userImage);
+                };
+            };
+
+            reader.readAsDataURL(file);
+        });
+        async function runPoseNetAndOverlayShirt(userImage) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const productImage = document.getElementById('product-image');
+
+            // Load mô hình PoseNet
+            const net = await posenet.load();
+
+            // Nhận diện vị trí các điểm trên cơ thể từ ảnh người dùng
+            const pose = await net.estimateSinglePose(userImage, {
+                flipHorizontal: false
+            });
+
+            // Vẽ lại hình ảnh người dùng
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(userImage, 0, 0, canvas.width, canvas.height);
+
+            // Nhận diện và ghép ảnh áo sản phẩm
+            const shoulderLeft = pose.keypoints.find(p => p.part === 'leftShoulder').position;
+            const shoulderRight = pose.keypoints.find(p => p.part === 'rightShoulder').position;
+
+            // Điều chỉnh kích thước và vị trí áo dựa trên vai người dùng
+            const shirtWidth = Math.abs(shoulderRight.x - shoulderLeft.x) * 1.5;
+            const shirtHeight = shirtWidth * (productImage.naturalHeight / productImage.naturalWidth);
+            const shirtX = shoulderLeft.x - (shirtWidth / 4);
+            const shirtY = shoulderLeft.y - (shirtHeight / 4);
+
+            ctx.drawImage(productImage, shirtX, shirtY, shirtWidth, shirtHeight);
+        }
+
+    </script>
+</body>
+</html>

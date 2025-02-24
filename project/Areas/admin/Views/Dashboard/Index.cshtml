@@ -1,0 +1,259 @@
+﻿@{
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var orderCounts = ViewBag.OrderCounts as Dictionary<string, int> ?? new Dictionary<string, int>
+{
+        { "Chờ xác nhận", 0 },
+        { "Chờ lấy hàng", 0 },
+        { "Đã xử lý", 0 },
+        { "Đơn huỷ", 0 }
+    }; var orders = Model as List<project.Models.Order>;
+}
+<br />
+
+<div class="dashboard-container">
+    <a href="/admin/dashboard?status=Chờ xác nhận" class="card">
+        <h3 id="chuaXacNhan">@orderCounts["Chờ xác nhận"]</h3>
+        <p>Chờ xác nhận</p>
+    </a>
+    <a href="/admin/dashboard?status=Chờ lấy hàng" class="card">
+        <h3 id="choLayHang">@orderCounts["Chờ lấy hàng"]</h3>
+        <p>Chờ lấy hàng</p>
+    </a>
+    <a href="/admin/dashboard?status=Đã xử lý" class="card">
+        <h3 id="daXuLy">@orderCounts["Đã xử lý"]</h3>
+        <p>Đã xử lý</p>
+    </a>
+    <a href="/admin/dashboard?status=Đơn huỷ" class="card">
+        <h3 id="donHuy">@orderCounts["Đơn huỷ"]</h3>
+        <p>Đơn huỷ</p>
+    </a>
+</div>
+
+<!-- Hiển thị bảng đơn hàng -->
+<div class="container-fluid" data-aos="fade-up">
+
+    <div class="section-header">
+        <h3>Danh sách đơn hàng: @ViewBag.Status</h3>
+
+        <table class="table" data-aos="fade-up" data-aos-delay="100">
+            <thead>
+                <tr>
+                    <th>Mã Đơn Hàng</th>
+                    <th>Ngày</th>
+                    <th>Tổng Tiền</th>
+                    <th>Trạng Thái</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in orders)
+                {
+                    <tr class="order">
+                        <td>@order.Madh</td>
+                        <td>@order.Ngay.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                        <td>@order.TongTien</td>
+                        <td>@order.TrangThai</td>
+                        <td>
+                            @if (order.TrangThai == "Chờ xác nhận")
+                            {
+                                <button onclick="updateOrderStatus(@order.Madh, 'Chờ lấy hàng')" class="btn btn-primary">Chờ lấy hàng</button>
+                                <button onclick="updateOrderStatus(@order.Madh, 'Đơn huỷ')" class="btn btn-danger">Hủy</button>
+                                <button onclick="printInvoice(@order.Madh)" class="btn btn-success">In hóa đơn</button>
+
+                            }
+                            else if (order.TrangThai == "Chờ lấy hàng")
+                            {
+                                <button onclick="updateOrderStatus(@order.Madh, 'Đã xử lý')" class="btn btn-primary">Đã lấy</button>
+                            }
+
+                        </td>
+                        <td>
+                            <button class="toggle-details btn btn-info">
+                                <img src="~/Content/img/icons8-down-arrow-50.png" class="toggle-icon" alt="Toggle details" />
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="order-details" style="display: none;">
+                        <td colspan="5">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã Sản Phẩm</th>
+                                        <th>Tên Sản Phẩm</th>
+                                        <th>Hình ảnh
+                                        <th>
+                                        <th>Số Lượng</th>
+                                        <th>Giá</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var product in order.Products)
+                                    {
+                                        <tr>
+                                            <td>@product.masp</td>
+                                            <td>@product.tensp</td>
+                                            <td><img src="~/Content/images/@product.hinhanh" alt="Product Image" class="product-image" /></td>
+                                            <td>@product.soluong</td>
+                                            <td>@product.gia</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Message"]
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["Error"]
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .btn {
+        padding: 5px 5px;
+        margin: 5px;
+        text-decoration: none;
+        color: #fff;
+        border-radius: 4px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 30px;
+        max-width: 600px;
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+    }
+
+    .card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .toggle-details {
+        background-color: white;
+        border: none;
+        padding: 10px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    .toggle-icon {
+        width: 15px;
+        height: 20px;
+        object-fit: contain;
+        margin-right: 5px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .toggle-details:hover {
+        background-color: #e5cfcf;
+    }
+
+
+    .toggle-details.open .toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    .product-image {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        display: block;
+        margin: 0 auto;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function printInvoice(orderId) {
+        window.location.href = '@Url.Action("INHOADON", "Dashboard")?orderId=' + orderId;
+    }
+    function updateOrderCounts() {
+        $.ajax({
+            url: '@Url.Action("GetOrderCounts", "Dashboard")',
+            type: 'GET',
+            success: function (data) {
+                $('#chuaXacNhan').text(data["Chờ xác nhận"]);
+                $('#choLayHang').text(data["Chờ lấy hàng"]);
+                $('#daXuLy').text(data["Đã xử lý"]);
+                $('#donHuy').text(data["Đơn huỷ"]);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching order counts:", error);
+            }
+        });
+    }
+
+    setInterval(updateOrderCounts, 1);
+
+    $(document).ready(function () {
+
+        $(".toggle-details").click(function () {
+            var orderDetails = $(this).closest("tr").next(".order-details");
+            orderDetails.toggle();
+        });
+    });
+
+    function updateOrderStatus(madh, newStatus) {
+        $.ajax({
+            url: '/admin/Dashboard/UpdateOrderStatus',
+            type: 'POST',
+            data: {
+                madh: madh,
+                newStatus: newStatus
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert('Cập nhật thành công!');
+                    location.reload();
+                } else {
+                    alert('Failed to update order status: ' + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred: ' + error);
+            }
+        });
+    }
+</script>

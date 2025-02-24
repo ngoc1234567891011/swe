@@ -1,0 +1,213 @@
+﻿@{
+    ViewBag.Title = "Xác nhận đơn hàng";
+}
+<style>
+    .menu-item {
+        position: relative;
+    }
+
+    .heart-icon {
+        position: absolute;
+        top: 0;
+        right: 0px;
+    }
+
+    .menu-img-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-info {
+        margin-top: 10px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .price-container {
+        color: black;
+        font-weight: bold;
+    }
+
+    .cart-icon a {
+        background-color: #ff4747;
+        color: white;
+        border-radius: 50%;
+        padding: 10px;
+        display: inline-block;
+        margin-top: -5px;
+        transition: all 0.3s ease;
+    }
+
+        .cart-icon a:hover {
+            background-color: #e41d1d;
+            transform: scale(1.1);
+        }
+
+    .old-price {
+        font-size: 14px;
+        color: #999;
+        text-decoration: line-through;
+        opacity: 0.6;
+    }
+
+    .new-price {
+        font-size: 16px;
+        font-weight: bold;
+        color: red;
+    }
+
+    .normal-price {
+        font-size: 16px;
+        font-weight: bold;
+        color: black;
+    }
+
+
+
+    .search-container {
+        margin-left: auto;
+        margin-right: 10px;
+        width: 150px;
+    }
+
+    .search-input {
+        height: 35px;
+        font-size: 14px;
+    }
+
+    .zyler-try-on-cta {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        background-color: #5a4f4f;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 8px 15px;
+        font-size: 10px;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        z-index: 10;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+    }
+
+        .zyler-try-on-cta img {
+            width: 14px;
+            height: 14px;
+        }
+
+        .zyler-try-on-cta:hover {
+            background-color: #333;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
+        }
+</style>
+<section id="menu" class="menu">
+    <div class="container" data-aos="fade-up">
+        <div class="section-header">
+            <br />
+            <div class="pagetitle">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="~/Home"><i class="bi bi-house-door"></i></a></li>
+                        <li class="breadcrumb-item"><a href="~/ShoppingCart/Show">Giỏ hàng</a></li>
+                        <li class="breadcrumb-item"><a href="~/ShoppingCart/ThanhToan">Thanh toán</a></li>
+                        <li class="breadcrumb-item active">Xác nhận đơn hàng</li>
+                    </ol>
+                </nav>
+            </div>
+            <p><span></span></p>
+        </div>
+        <div class="tab-content" data-aos="fade-up" data-aos-delay="300">
+            <p style="text-align:center">Cảm ơn bạn đã đặt hàng!</p>
+            
+            <h3>Sản phẩm gợi ý cho bạn:</h3>
+            <div class="row">
+                @if (ViewBag.RecommendedProducts != null)
+                {
+                    <div class="tab-content" data-aos="fade-up" data-aos-delay="300">
+                        <div class="row gy-5">
+                            @foreach (var product in ViewBag.RecommendedProducts)
+                            {
+                                <div class="col-lg-4 menu-item">
+                                    <a href="~/Content/images/@product.hinhanh" class="glightbox"><img src="~/Content/images/@product.hinhanh" class="menu-img img-fluid" alt=""></a>
+                                    <span class="heart-icon">
+                                        @if (Session["FavItem"] != null && ((List<int>)Session["FavItem"]).Contains(product.masp))
+                                        {
+                                            <a class="btn favorite-toggle" data-action="remove" data-product-id="@product.masp">
+                                                <img class="heartImage" src="~/Content/img/icons8-heart-black.png" alt="Đã yêu thích">
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn favorite-toggle" data-action="add" data-product-id="@product.masp">
+                                                <img class="heartImage" src="~/Content/img/icons8-heart-24.png" alt="Yêu thích">
+                                            </a>
+                                        }
+                                    </span>
+
+
+                                    <div class="product-info">
+
+                                        <button class="zyler-try-on-cta" data-masp="@product.masp" data-image="@product.hinhanh">
+                                            <img src="~/Content/img/icons8-camera-50.png" alt="Camera Icon"> Thử Đồ
+                                        </button>
+
+
+
+
+
+                                        <h4>
+                                            <a style="color: black; font-size: 12px;" href="@Url.Action("Details", new { id = product.masp })">@product.tensp</a>
+                                        </h4>
+                                        <div class="price-container">
+                                            <p style="font-size: 15px;" class="price">
+                                                @if (product.Promotion != null && !string.IsNullOrEmpty(product.Promotion.ten_khuyen_mai))
+                                                {
+                                                    <span class="old-price">
+                                                        @(product.gia?.ToString("N0")) đ
+                                                    </span>
+                                                    <br />
+                                                    <span class="new-price">
+                                                        @{
+                                                            decimal originalPrice = product.gia.HasValue ? (decimal)product.gia.Value : 0;
+                                                            decimal discountPercentage = product.Promotion.dieu_kien.HasValue ? (decimal)product.Promotion.dieu_kien.Value : 0;
+
+                                                            decimal finalPrice = originalPrice * (1 - discountPercentage / 100);
+                                                            string formattedPrice = finalPrice.ToString("N0");
+                                                        }
+                                                        @formattedPrice đ
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="normal-price">
+                                                        @(product.gia?.ToString("N0")) đ
+                                                    </span>
+                                                    <br />
+                                                    <br />
+                                                }
+                                            </p>
+                                        </div>
+
+
+                                        <div class="cart-icon">
+                                            <a class="btn add-to-cart-btn" data-id="@product.masp" data-quantity="1">
+                                                <img src="~/Content/img/icons8-add-shopping-cart-24.png" alt="Add to Cart">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }</div>
+                            
+                </div>
+        </section>

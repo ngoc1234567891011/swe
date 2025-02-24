@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int index = 1;
+}
+
+@model List<project.Models.OrderDetail>
+<section id="menu" class="menu">
+    <div class="container" data-aos="fade-up">
+        <div class="section-header">
+            <br />
+            <div class="pagetitle">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="~/Home"><i class="bi bi-house-door"></i></a></li>
+                        <li class="breadcrumb-item"><a href="~/Profile/lichsu">Lịch sử mua hàng</a></li>
+                        <li class="breadcrumb-item active">Chi tiết</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <p><span></span></p>
+        </div>
+        <div class="tab-content" data-aos="fade-up" data-aos-delay="300">
+            <div class="row" style="display: flex; align-items: baseline;">
+                @foreach (var orderDetail in Model)
+                {
+                    <div class="col-lg-1">
+                        @index
+                    </div>
+                    <div class="col-lg-2">
+                        <img src="~/Content/images/@orderDetail.hinhanh" style="width:100px" />
+                    </div>
+                    <div class="col-lg-5">
+                        <h7>@orderDetail.tensp  &nbsp;&nbsp;x    @orderDetail.SoLuong</h7>
+                    </div>
+
+                    <div class="col-lg-2">
+                        <h6>Giá: @(orderDetail.Gia.ToString("N0")) đ</h6>
+                    </div>
+                    <div class="col-lg-2" style="border-left: 1px solid rgba(0, 0, 0, 0.5); ">
+                        @Html.ActionLink("Mua lại", "Details", "SanPham", new { id = orderDetail.Masp }, null)
+                    </div>
+                    index++;
+                }
+            </div>
+
+
+
+        </div>
+
+
+
+    </div>
+</section>
+
+

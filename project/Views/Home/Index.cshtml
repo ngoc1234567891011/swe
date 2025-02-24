@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Danh sách sản phẩm";
+}
+<style>
+    .menu-item {
+        position: relative;
+    }
+
+    .heart-icon {
+        position: absolute;
+        top: 0;
+        right: 70px;
+    }
+
+    .cart-icon {
+        position: absolute;
+        top: 235px;
+        left: 100px;
+    }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    .price-container {
+        text-align: right;
+    }
+</style>
+
+<!-- ======= Hero Section ======= -->
+
+<section id="hero" class="hero d-flex align-items-center section-bg">
+    <div class="container">
+        <div class="marquee-container">
+            <marquee behavior="scroll" direction="left">
+                @*                <h5>MUA 5 SẢN PHẨM GIẢM 30% ĐƠN ĐẶT HÀNG   </h5>
+                *@
+            </marquee>
+        </div>
+        <div class="row justify-content-between gy-5">
+            <img src="~/Content/img/poster.png" class="img-fluid" alt="" data-aos="zoom-out" data-aos-delay="300" style="width:100%">
+        </div>
+    </div>
+</section>
+<!-- Tiêu Đề -->
+<section id="about" class="about section">
+
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Về Chúng Tôi<br></h2>
+    </div><!-- Kết Thúc Tiêu Đề -->
+
+    <div class="container">
+
+        <div class="row gy-4">
+            <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
+                <img src="~/Content/img/images.jpg" class="img-fluid mb-4" alt="" width="600">
+                <div class="book-a-table">
+                </div>
+            </div>
+            <div class="col-lg-5" data-aos="fade-up" data-aos-delay="250">
+                <div class="content ps-0 ps-lg-5">
+                    <p class="fst-italic">
+                        Thương hiệu SWE chuyên cung cấp các sản phẩm áo thun chất lượng cao, mang phong cách hiện đại và trẻ trung.
+                    </p>
+                    <ul>
+                        <li><i class="bi bi-check-circle-fill"></i> <span>Thiết kế độc đáo, phong cách riêng biệt.</span></li>
+                        <li><i class="bi bi-check-circle-fill"></i> <span>Chất liệu thoáng mát, thoải mái khi mặc.</span></li>
+                        <li><i class="bi bi-check-circle-fill"></i> <span>Giá cả hợp lý, phù hợp với nhiều đối tượng khách hàng.</span></li>
+                    </ul>
+                    <p>
+                        Đội ngũ của chúng tôi luôn nỗ lực không ngừng để mang đến cho khách hàng những sản phẩm tốt nhất, đáp ứng mọi nhu cầu về thời trang.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<section id="why-us" class="why-us section light-background">
+
+    <div class="container">
+
+        <div class="row gy-4">
+
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="why-box">
+                    <h3>Tại Sao Chọn SWE</h3>
+                    <p>
+                        Thương hiệu SWE luôn đặt chất lượng sản phẩm và sự hài lòng của khách hàng lên hàng đầu. Chúng tôi cam kết mang đến những trải nghiệm mua sắm tuyệt vời nhất.
+                    </p>
+                    <div class="text-center">
+                        <a href="#" class="more-btn"><span>Tìm Hiểu Thêm</span> <i class="bi bi-chevron-right"></i></a>
+                    </div>
+                </div>
+            </div><!-- Kết Thúc Why Box -->
+
+            <div class="col-lg-8 d-flex align-items-stretch">
+                <div class="row gy-4" data-aos="fade-up" data-aos-delay="200">
+
+                    <div class="col-xl-4">
+                        <div class="icon-box d-flex flex-column justify-content-center align-items-center">
+                            <i class="bi bi-clipboard-data"></i>
+                            <h4>Chất Lượng Đỉnh Cao</h4>
+                            <p>Sản phẩm được làm từ chất liệu tốt nhất, đảm bảo độ bền và sự thoải mái.</p>
+                        </div>
+                    </div><!-- Kết Thúc Icon Box -->
+
+                    <div class="col-xl-4" data-aos="fade-up" data-aos-delay="300">
+                        <div class="icon-box d-flex flex-column justify-content-center align-items-center">
+                            <i class="bi bi-gem"></i>
+                            <h4>Thiết Kế Độc Đáo</h4>
+                            <p>Những mẫu thiết kế mới lạ, phong cách, giúp bạn nổi bật giữa đám đông.</p>
+                        </div>
+                    </div><!-- Kết Thúc Icon Box -->
+
+                    <div class="col-xl-4" data-aos="fade-up" data-aos-delay="400">
+                        <div class="icon-box d-flex flex-column justify-content-center align-items-center">
+                            <i class="bi bi-inboxes"></i>
+                            <h4>Dịch Vụ Tận Tâm</h4>
+                            <p>Đội ngũ chăm sóc khách hàng nhiệt tình, luôn sẵn sàng hỗ trợ bạn.</p>
+                        </div>
+                    </div><!-- Kết Thúc Icon Box -->
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</section><!-- /Why Us Section -->

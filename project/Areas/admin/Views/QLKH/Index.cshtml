@@ -1,0 +1,128 @@
+﻿
+@{
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@model IEnumerable<project.Models.Customer>
+
+@{
+    ViewBag.Title = "Danh sách khách hàng";
+}
+<style>
+    .search-container {
+        margin-left: auto;
+        margin-right: 10px;
+        width: 200px;
+    }
+
+    .search-input {
+        height: 35px;
+        font-size: 14px;
+    }
+</style>
+<h2></h2>
+<div class="container-fluid" data-aos="fade-up">
+
+    <div class="section-header">
+        <p>Khách hàng</p>
+        <h7>
+            @Html.ActionLink("Thêm mới", "Create")
+        </h7>
+        <div class="pagetitle">
+            <nav class="d-flex">
+                
+                <div class="search-container">
+                    @using (Html.BeginForm("timkiem", "Product", new { area = "Admin" }, FormMethod.Get, new { @class = "form-inline" }))
+                    {
+                        <input type="hidden" name="categoryID" value="@ViewBag.CategoryID" /> <!-- Thêm input hidden với giá trị mặc định "1" -->
+                        <input type="text" class="form-control search-input" placeholder="Tìm kiếm" value="@ViewBag.Keyword" name="searchString">
+                    }
+                </div>
+            </nav>
+        </div>
+        <table class="table" data-aos="fade-up" data-aos-delay="100">
+            <!-- Hiển thị thông báo -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+            <tr>
+                <th>Mã khách hàng</th>
+                <th>Tên khách hàng</th>
+                <th>Số điện thoại</th>
+                <th>Email</th>
+                <th>Địa chỉ</th>
+                <th>Hình ảnh</th>
+                <th></th>
+            </tr>
+            <tbody>
+                @foreach (var customer in Model)
+                {
+                    <tr>
+                        <td>@customer.makh</td>
+                        <td>@customer.tenkh</td>
+                        <td>@customer.sdt</td>
+                        <td>@customer.email</td>
+                        <td>
+                            @(customer.diachi + ", " + customer.WardName + ", " + customer.DistrictName + ", " + customer.ProvinceName)
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(customer.hinhanh))
+                            {
+                                <img src="~/Content/user/@customer.hinhanh" alt="Hình ảnh khách hàng" style="width: 100px; height: 100px;" />
+                            }
+                            else
+                            {
+                                <span>Không có hình ảnh</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+
+                                <a href="@Url.Action("Details", new { id = customer.makh })" class="btn btn-link">
+                                    <img src='~/Content/img/icons8-detail-50.png' alt='Chi tiết' class="action-icon" />
+                                </a>
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<style>
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .action-icon {
+        width: 15px;
+        height: 15px;
+        object-fit: contain;
+    }
+
+    button {
+        border: none;
+        background: none;
+        padding: 0;
+        outline: none;
+    }
+
+        button img {
+            width: 10px;
+            height: 10px;
+        }
+</style>

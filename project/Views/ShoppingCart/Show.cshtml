@@ -1,0 +1,94 @@
+﻿@model project.Models.Cart
+@{
+    ViewBag.Title = "Giỏ hàng";
+}
+<br />
+<br />
+<br />
+<div class="container-fluid" data-aos="fade-up">
+    <br />
+    <div class="pagetitle" style="margin-left:10px">
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="~/Home"><i class="bi bi-house-door"></i></a></li>
+                <li class="breadcrumb-item active">Giỏ hàng</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="section-header">
+        <p>Giỏ hàng</p>
+
+        @if (ViewBag.IsEmpty)
+        {
+            <h4 >Giỏ hàng của bạn đang rỗng.</h4>
+            <br />
+            <br />
+            <br /><br />
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tên sản phẩm</th>
+                        <th>Hình ảnh</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+
+                        decimal price = item.DiscountedPrice; // Sử dụng giá đã giảm
+                        double sum = (double)price * item.shopping_sl;
+                        <tr>
+                            <td>@Html.DisplayFor(model => item.shopping_sp.tensp)</td>
+                            <td style="width:100px">
+                                <img src="~/Content/images/@item.shopping_sp.hinhanh" style="width:100px;height:100%" />
+                            </td>
+                            <td>
+                                @(price.ToString("N0")) đ
+                            </td>
+                            <td>
+                                @using (Html.BeginForm("Update", "ShoppingCart", FormMethod.Post, new { @class = "my" }))
+                                {
+                                    <input type="hidden" value="@item.shopping_sp.masp" name="id" />
+                                    <input class="form-control" type="number" min="0" value="@item.shopping_sl" name="sl" style="width:100px; height:30px; margin-top:5px" />
+                                    <input class="btn btn-light rounded-pill" type="submit" value="Cập nhật" style="width:100px; height:40px" />
+                                }
+                            </td>
+                            <td>
+                                @(sum.ToString("N0")) đ
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Remove", "ShoppingCart", new { id = item.shopping_sp.masp })">Xoá</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" style="text-align:right">Tổng tiền: <b>@Model.Total().ToString("N0") đ</b></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <p class="text-danger" style="color:yellowgreen">
+                @Html.Raw(TempData["error"] ?? "")
+            </p>
+            <div class="dathang" style="margin:auto; text-align:center;">
+                <button type="button" class="btn btn-outline-info btn-lg">
+                    <a href="~/ShoppingCart/ThanhToan">Thanh toán</a>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .my {
+        display: inline-flex;
+    }
+</style>

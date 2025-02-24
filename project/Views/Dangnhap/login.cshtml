@@ -1,0 +1,225 @@
+﻿@{
+    ViewBag.Title = "Đăng Nhập";
+}
+<br />
+<br />
+<meta name="google-signin-client_id" content="11359001624-14faap13s963qi0n0pcfo9i16duhbrh8.apps.googleusercontent.com">
+
+
+@using (Html.BeginForm("login", "Dangnhap", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container">
+            <div class="pagetitle">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="~/Home"><i class="bi bi-house-door"></i></a></li>
+                        <li class="breadcrumb-item active">Đăng nhập</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                    <div class="card mb-3">
+                        <div class="card-body" style="width:550px">
+                            <div class="pt-4 pb-2">
+                                <h5 class="card-title text-center pb-0 fs-4">ĐĂNG NHẬP</h5>
+                                <p class="text-center small"></p>
+                            </div>
+
+                            <form class="row g-3 needs-validation" novalidate>
+                                <div class="col-12">
+                                    <label for="yourSdt" class="form-label">Số điện thoại</label>
+                                    <div class="input-group has-validation">
+                                        <input type="text" name="sdt" id="yourSdt" class="form-control" required>
+                                        <div class="invalid-feedback">Vui lòng nhập số điện thoại.</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="yourPassword" class="form-label">Mật khẩu</label>
+                                    <input type="password" name="password" class="form-control" id="yourPassword" required>
+                                    <div class="invalid-feedback">Vui lòng nhập mật khẩu!</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <p class="small mb-0"><a href="~/Dangnhap/quenmk">Quên mật khẩu</a></p>
+                                </div>
+                                <div class="col-12">
+                                    <button class="btn btn-primary w-100" style="background-color:red; margin:20px 0px 10px 0" type="submit">Đăng nhập</button>
+                                </div>
+
+                                <div class="col-12">
+                                    <p class="small mb-0">Bạn không có tài khoản? <a href="~/Dangnhap/register">Tạo tài khoản</a></p>
+                                </div>
+                                <div class="col-12 text-center mt-3">
+                                    <div class="divider">
+                                        <span>Hoặc</span>
+                                    </div>
+                                </div>
+                                <div class="col-12 d-flex justify-content-between align-items-center social-login">
+                                    <button class="btn btn-facebook w-45" type="button" onclick="window.location.href='@ViewBag.FacebookUrl'">
+                                        <img src="~/Content/img/icons8-facebook-30.png" alt="Facebook" class="social-logo">  Facebook
+                                    </button>
+
+                                    <div class="social-login">
+                                        <div id="g_id_onload"
+                                             data-client_id="11359001624-14faap13s963qi0n0pcfo9i16duhbrh8.apps.googleusercontent.com"
+                                             data-login_uri="https://localhost:44349/Dangnhap/GoogleLogin"
+                                             data-auto_prompt="false">
+                                        </div>
+
+                                        <div class="g_id_signin" id="google-signin-button">
+
+                                        </div>
+                                    </div>
+                                    </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+    function handleCredentialResponse(response) {
+        console.log("Encoded JWT ID token: " + response.credential);
+        fetch('/Dangnhap/GoogleLogin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ idToken: response.credential })
+        })
+            .then(res => {
+                console.log(res);  // Log kết quả phản hồi
+                return res.json();
+            })
+            .then(data => {
+                console.log(data);  // Log dữ liệu phản hồi
+                if (data.success) {
+                    window.location.href = data.redirectUrl || '/Home';
+                } else {
+                    alert('Đăng nhập thất bại: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during authentication:', error);
+                alert('Đã có lỗi xảy ra trong quá trình đăng nhập!');
+            });
+    }
+
+
+    window.onload = function () {
+        google.accounts.id.initialize({
+            client_id: '11359001624-14faap13s963qi0n0pcfo9i16duhbrh8.apps.googleusercontent.com',
+            callback: handleCredentialResponse
+        });
+
+        // Hiển thị nút đăng nhập Google bằng cách sử dụng renderButton
+        google.accounts.id.renderButton(
+            document.getElementById("google-signin-button"),
+            {
+                theme: "outline",
+                size: "large",
+                shape: "rectangular",
+                text: "sign_in_with"
+            }
+        );
+    };
+</script>
+
+
+<style>
+    .text-muted {
+        font-size: 16px;
+        margin-bottom: 10px;
+        font-weight: 500;
+        color: #6c757d;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 10px 0;
+    }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ccc;
+            margin: 0 10px;
+        }
+
+        .divider span {
+            font-size: 16px;
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+    .social-login {
+        gap: 10px;
+    }
+
+    .w-45 {
+        width: 45%;
+    }
+
+    .btn-facebook {
+        background-color: #1877F2;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        padding: 10px 15px;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-facebook:hover {
+            background-color: #145dbf;
+        }
+
+    .btn-google {
+        background-color: white;
+        color: black;
+        border: 2px solid black;
+        font-size: 14px;
+        font-weight: bold;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+        .btn-google:hover {
+            background-color: #f5f5f5;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+
+
+
+    /* Logo bên trong nút */
+    .social-logo {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+    }
+</style>

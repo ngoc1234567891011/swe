@@ -1,0 +1,263 @@
+﻿@model List<project.Models.DoanhThu>
+
+@{
+    ViewBag.Title = "Thống kê doanh thu";
+}
+
+<h1 class="dashboard-title"> Thống kê doanh thu</h1>
+
+<!-- Bộ lọc thời gian -->
+<form method="get" action="@Url.Action("Index", "Doanhthu")" class="filter-form">
+    <div class="filter-container">
+        <label for="startDate">Từ ngày:</label>
+        <input type="date" id="startDate" name="startDate" value="@ViewBag.StartDate?.ToString(" yyyy-MM-dd")" class="date-picker" />
+
+        <label for="endDate">Đến ngày:</label>
+        <input type="date" id="endDate" name="endDate" value="@ViewBag.EndDate?.ToString(" yyyy-MM-dd")" class="date-picker" />
+
+        <button type="submit" class="submit-btn">Lọc</button>
+    </div>
+</form>
+
+<hr />
+
+<!-- KPI Tổng quan -->
+<div class="kpi-overview">
+    <p>
+        <b>Thời gian lọc:</b>
+        @if (ViewBag.StartDate != null && ViewBag.EndDate != null)
+        {
+            <span>@ViewBag.StartDate.ToString("dd/MM/yyyy") - @ViewBag.EndDate.ToString("dd/MM/yyyy")</span>
+        }
+        else
+        {
+            <span>Toàn bộ thời gian</span>
+        }
+    </p>
+    <p><b>Doanh thu:</b> @ViewBag.TotalRevenue.ToString("N0") VNĐ</p>
+    <p><b>Số đơn hàng:</b> @ViewBag.TotalOrders</p>
+    <p><b>Giá trị trung bình mỗi đơn hàng:</b> @ViewBag.AverageOrderValue.ToString("N0") VNĐ</p>
+
+</div>
+
+<hr />
+
+<!-- Biểu đồ -->
+<h2>Biểu đồ</h2>
+<div class="charts-container">
+    @if (ViewBag.BarChart != null)
+    {
+        <img src="data:image/png;base64,@Convert.ToBase64String(ViewBag.BarChart)" alt="Biểu đồ cột" class="chart-image" />
+    }
+    else
+    {
+
+    }
+
+    @if (ViewBag.LineChart != null)
+    {
+        <img src="data:image/png;base64,@Convert.ToBase64String(ViewBag.LineChart)" alt="Biểu đồ đường" class="chart-image" />
+    }
+    else
+    {
+
+    }
+
+    @if (ViewBag.PieChart != null)
+    {
+        <img src="data:image/png;base64,@Convert.ToBase64String(ViewBag.PieChart)" alt="Biểu đồ tròn" class="chart-image" />
+    }
+    else
+    {
+
+    }
+</div>
+
+<hr />
+
+<!-- Bảng dữ liệu -->
+<h2>Sản phẩm bán chạy</h2>
+@if (ViewBag.TopProducts != null && ((List<project.Areas.admin.Controllers.TopProduct>)ViewBag.TopProducts).Any())
+{
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Tổng số lượng sản phẩm đã mua</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in (List<project.Areas.admin.Controllers.TopProduct>)ViewBag.TopProducts)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.TotalQuantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+}
+
+<h2>Khách hàng tiềm năng</h2>
+@if (ViewBag.TopCustomers != null && ((List<project.Areas.admin.Controllers.TopCustomer>)ViewBag.TopCustomers).Any())
+{
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Tên khách hàng</th>
+                <th>Tổng tiền đã mua</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in (List<project.Areas.admin.Controllers.TopCustomer>)ViewBag.TopCustomers)
+            {
+                <tr>
+                    <td>@item.CustomerName</td>
+                    <td>@item.TotalSpent</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+}
+
+<h2>Bảng số liệu</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Ngày</th>
+            <th>Số lượng</th>
+            <th>Tổng tiền (VNĐ)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Ngay.ToString("dd/MM/yyyy")</td>
+                    <td>@item.SoLuong</td>
+                    <td>@item.TongTien.ToString("N0")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">Không có dữ liệu để hiển thị.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- CSS -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+    }
+
+    h1.dashboard-title {
+        text-align: center;
+        color: #333;
+        font-weight:bold;
+        font-size: 36px;
+    }
+
+    .filter-form {
+        margin: 20px 0;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-container {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+        .filter-container label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+    .date-picker {
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    .submit-btn {
+        background-color: #f44336;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        .submit-btn:hover {
+            background-color: #e53935;
+        }
+
+    .kpi-overview {
+        background-color: #fff;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .charts-container h4 {
+        margin-top: 20px;
+        color: #333;
+    }
+
+    .chart-image {
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px;
+    }
+
+    .data-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .data-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .data-table td[colspan="3"] {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+        }
+</style>
